@@ -10,41 +10,22 @@
 
     <style>
         body { font-family: sans-serif; background: #e9ecef; margin: 0; padding: 10px; }
-        
-        input, textarea, select { 
-            text-transform: uppercase; 
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; 
-            font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; 
-        }
-
+        input, textarea, select { text-transform: uppercase; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; }
         .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .header { text-align: center; color: #1a73e8; border-bottom: 2px solid #1a73e8; margin-bottom: 20px; padding-bottom: 10px; font-weight: bold; font-size: 22px; }
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
-        
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
-
-        .btn-acao { 
-            width: 100%; height: 55px; border: none; border-radius: 8px; font-weight: bold; 
-            cursor: pointer; font-size: 16px; text-transform: uppercase; color: white; 
-            display: flex; align-items: center; justify-content: center; background: #1a73e8;
-        }
+        .btn-acao { width: 100%; height: 55px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; color: white; display: flex; align-items: center; justify-content: center; background: #1a73e8; }
+        #detalhe-pagamento { background: #fdf2f2; border: 1px solid #ffc1c1; padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none; font-size: 14px; font-weight: bold; color: #333; }
 
         @media print {
             @page { size: A4 landscape; margin: 5mm; }
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
-            #print-area { 
-                position: fixed; left: 0; top: 0; width: 100%; height: 100%;
-                display: flex !important; justify-content: space-between; 
-                background: white; padding: 0; margin: 0;
-            }
-            .via { 
-                width: 48%; height: 95%; border: 1px dashed #000; 
-                padding: 10px; box-sizing: border-box;
-                display: flex; flex-direction: column; font-size: 10px;
-            }
+            #print-area { position: fixed; left: 0; top: 0; width: 100%; height: 100%; display: flex !important; justify-content: space-between; background: white; padding: 0; margin: 0; }
+            .via { width: 48%; height: 95%; border: 1px dashed #000; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; font-size: 10px; }
             .no-print { display: none !important; }
         }
     </style>
@@ -60,17 +41,14 @@
     </div>
     
     <div class="campo"><label>Cliente</label><input type="text" id="i-cliente"></div>
-    
     <div style="display: flex; gap: 10px;">
         <div class="campo" style="flex: 3;"><label>Rua</label><input type="text" id="i-rua"></div>
         <div class="campo" style="flex: 1;"><label>Nº</label><input type="text" id="i-num"></div>
     </div>
-    
     <div style="display: flex; gap: 10px;">
         <div class="campo" style="flex: 1;"><label>Bairro</label><input type="text" id="i-bairro"></div>
         <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="i-cidade"></div>
     </div>
-
     <div class="campo"><label>Ponto de Referência</label><textarea id="i-ref"></textarea></div>
     
     <div id="lista-mercadorias">
@@ -81,7 +59,7 @@
             <input type="number" step="0.01" placeholder="0,00" style="flex: 1.5;" class="m-val" oninput="calcularTotais()">
         </div>
     </div>
-    <button onclick="adicionarLinha()" style="width:100%; margin-bottom:15px; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; padding:8px; cursor:pointer;">+ ADICIONAR ITEM</button>
+    <button onclick="adicionarLinha()" style="width:100%; margin-bottom:15px; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; padding:8px;">+ ADICIONAR ITEM</button>
 
     <div style="display: flex; gap: 5px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
         <div class="campo" style="flex: 1;"><label>Subtotal</label><input type="number" id="i-v-merc" readonly></div>
@@ -89,7 +67,21 @@
         <div class="campo" style="flex: 1;"><label>Total</label><input type="number" id="i-v-total" readonly style="font-weight: bold; color: #1a73e8;"></div>
     </div>
 
-    <div class="campo" style="margin-top:10px;"><label>Vendedor</label><input type="text" id="i-vend" oninput="salvarDadosFixos()"></div>
+    <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+        <div class="campo" style="flex: 1; min-width: 140px;"><label>Pagamento</label><select id="i-pagamento" onchange="alternarCartao()"><option value="PIX">PIX</option><option value="DINHEIRO">DINHEIRO</option><option value="CARTÃO">CARTÃO</option></select></div>
+        <div class="campo" id="box-tipo-cartao" style="flex: 1; display: none;"><label>Tipo</label><select id="i-tipo-cartao" onchange="alternarCartao()"><option value="CREDITO">CRÉDITO</option><option value="DEBITO">DÉBITO</option></select></div>
+        <div class="campo" id="box-parcelas" style="flex: 1; display: none;"><label>Parcelas</label><select id="i-parcelas" onchange="calcularTotais()">
+            <option value="1">1X</option><option value="2">2X</option><option value="3">3X</option><option value="4">4X</option><option value="5">5X</option><option value="6">6X</option>
+            <option value="7">7X</option><option value="8">8X</option><option value="9">9X</option><option value="10">10X</option><option value="11">11X</option><option value="12">12X</option>
+        </select></div>
+        <div class="campo" id="box-entrada" style="flex: 1.5; display: none;"><label>Entrada (PIX/DIN)</label><input type="number" step="0.01" id="i-v-entrada" oninput="calcularTotais()"></div>
+    </div>
+    <div id="detalhe-pagamento"></div>
+
+    <div style="display: flex; gap: 10px;">
+        <div class="campo" style="flex: 1;"><label>Vendedor</label><input type="text" id="i-vend" oninput="salvarDadosFixos()"></div>
+        <div class="campo" style="flex: 1;"><label>Supervisor</label><input type="text" id="i-super" oninput="salvarDadosFixos()"></div>
+    </div>
 
     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
         <button class="btn-acao" onclick="gerarPDF()">Gerar PDF / Imprimir</button>
@@ -97,17 +89,21 @@
         <button class="btn-acao" style="background: #6c757d;" onclick="if(confirm('Limpar tudo?')) location.reload()">Novo Pedido</button>
     </div>
 </div>
-
 <div id="print-area"></div>
 
 <script>
+    const taxasCredito = { "1": 3.37, "2": 4.90, "3": 6.80, "4": 7.90, "5": 9.80, "6": 11.49, "7": 12.80, "8": 14.87, "9": 15.83, "10": 16.87, "11": 18.89, "12": 20.10 };
+    const taxaDebito = 2.00;
+
     window.onload = function() {
         document.getElementById('i-data').value = new Date().toISOString().substring(0, 10);
         document.getElementById('i-vend').value = localStorage.getItem('vendedor') || "";
+        document.getElementById('i-super').value = localStorage.getItem('supervisor') || "";
     };
 
     function salvarDadosFixos() {
         localStorage.setItem('vendedor', document.getElementById('i-vend').value.toUpperCase());
+        localStorage.setItem('supervisor', document.getElementById('i-super').value.toUpperCase());
     }
 
     function adicionarLinha() {
@@ -118,52 +114,67 @@
         document.getElementById('lista-mercadorias').appendChild(div);
     }
 
+    function alternarCartao() {
+        const pag = document.getElementById('i-pagamento').value;
+        const tipo = document.getElementById('i-tipo-cartao').value;
+        document.getElementById('box-tipo-cartao').style.display = (pag === 'CARTÃO') ? 'block' : 'none';
+        document.getElementById('box-parcelas').style.display = (pag === 'CARTÃO' && tipo === 'CREDITO') ? 'block' : 'none';
+        document.getElementById('box-entrada').style.display = (pag === 'CARTÃO') ? 'block' : 'none';
+        document.getElementById('detalhe-pagamento').style.display = (pag === 'CARTÃO') ? 'block' : 'none';
+        calcularTotais();
+    }
+
     function calcularTotais() {
         let somaMerc = 0;
         document.querySelectorAll('.m-val').forEach(el => somaMerc += parseFloat(el.value) || 0);
         const frete = parseFloat(document.getElementById('i-v-frete').value) || 0;
+        const totalBase = somaMerc + frete;
         document.getElementById('i-v-merc').value = somaMerc.toFixed(2);
-        document.getElementById('i-v-total').value = (somaMerc + frete).toFixed(2);
+        document.getElementById('i-v-total').value = totalBase.toFixed(2);
+
+        const pag = document.getElementById('i-pagamento').value;
+        if (pag === 'CARTÃO') {
+            const entrada = parseFloat(document.getElementById('i-v-entrada').value) || 0;
+            const tipo = document.getElementById('i-tipo-cartao').value;
+            const parcelas = document.getElementById('i-parcelas').value;
+            const valorParaCartao = totalBase - entrada;
+            const taxa = (tipo === 'CREDITO') ? (taxasCredito[parcelas] / 100) : (taxaDebito / 100);
+            const valorComTaxa = valorParaCartao + (valorParaCartao * taxa);
+            let txt = `CARTÃO: R$ ${valorComTaxa.toFixed(2)}`;
+            if(tipo === 'CREDITO') txt += ` (${parcelas}X DE R$ ${(valorComTaxa/parcelas).toFixed(2)})`;
+            if(entrada > 0) txt += `<br>ENTRADA: R$ ${entrada.toFixed(2)}`;
+            txt += `<br>TOTAL COM TAXAS: R$ ${(valorComTaxa + entrada).toFixed(2)}`;
+            document.getElementById('detalhe-pagamento').innerHTML = txt;
+        }
     }
 
     function gerarPDF() {
         const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
         const f = (id) => document.getElementById(id).value.toUpperCase();
-        
         let mercsHTML = "";
         document.querySelectorAll('.m-desc').forEach((el, i) => {
             const val = parseFloat(document.querySelectorAll('.m-val')[i].value) || 0;
-            if(el.value || val > 0) {
-                mercsHTML += `<div style="display:flex; margin-bottom:2px; border-bottom:0.5px solid #eee;">
-                    <div style="flex:3">${el.value.toUpperCase()}</div>
-                    <div style="flex:0.6; text-align:center">${document.querySelectorAll('.m-un')[i].value.toUpperCase()}</div>
-                    <div style="flex:1.2; text-align:right">R$ ${val.toFixed(2)}</div>
-                </div>`;
+            if(el.value) {
+                mercsHTML += `<div style="display:flex; margin-bottom:2px; border-bottom:0.5px solid #eee;"><div style="flex:3">${el.value.toUpperCase()}</div><div style="flex:0.6; text-align:center">${document.querySelectorAll('.m-un')[i].value.toUpperCase()}</div><div style="flex:1.2; text-align:right">R$ ${val.toFixed(2)}</div></div>`;
             }
         });
 
-        const viaConteudo = `
-            <div class="via">
-                <div style="text-align:center; font-weight:bold; font-size:16px; border-bottom:2px solid #000; margin-bottom:10px;">PEDIDO JÁ</div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                    <span>DATA: ${formatarData(document.getElementById('i-data').value)}</span>
-                    <span>ENTREGA: ${formatarData(document.getElementById('i-entrega').value)}</span>
-                </div>
-                <div style="margin-bottom:3px;"><b>CLIENTE:</b> ${f('i-cliente')}</div>
-                <div style="margin-bottom:3px;"><b>ENDEREÇO:</b> ${f('i-rua')}, ${f('i-num')}</div>
-                <div style="margin-bottom:3px;"><b>BAIRRO:</b> ${f('i-bairro')} - ${f('i-cidade')}</div>
-                <div style="margin-bottom:10px;"><b>REF:</b> ${f('i-ref')}</div>
-                <div style="border-bottom:1px solid #000; font-weight:bold; display:flex; font-size:10px; margin-bottom:5px;">
-                    <div style="flex:3">ITEM</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
-                </div>
-                <div style="flex-grow:1;">${mercsHTML}</div>
-                <div style="border-top:1px solid #000; padding-top:5px; margin-top:10px;">
-                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:12px;">
-                        <span>TOTAL DO PEDIDO:</span><span>R$ ${document.getElementById('i-v-total').value}</span>
-                    </div>
-                </div>
-                <div style="margin-top:20px; border-top:1px solid #ccc; padding-top:5px;"><b>VENDEDOR:</b> ${f('i-vend')}</div>
-            </div>`;
+        const infoPag = document.getElementById('i-pagamento').value === 'CARTÃO' ? `<div style="font-size:9px; margin-top:5px;">${document.getElementById('detalhe-pagamento').innerHTML}</div>` : `<div>PAGAMENTO: ${f('i-pagamento')}</div>`;
+
+        const viaConteudo = `<div class="via">
+            <div style="text-align:center; font-weight:bold; font-size:16px; border-bottom:2px solid #000; margin-bottom:10px;">PEDIDO JÁ</div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>DATA: ${formatarData(document.getElementById('i-data').value)}</span><span>ENTREGA: ${formatarData(document.getElementById('i-entrega').value)}</span></div>
+            <div><b>CLIENTE:</b> ${f('i-cliente')}</div>
+            <div><b>ENDEREÇO:</b> ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}</div>
+            <div style="margin-bottom:10px;"><b>REF:</b> ${f('i-ref')}</div>
+            <div style="border-bottom:1px solid #000; font-weight:bold; display:flex; font-size:10px;">
+                <div style="flex:3">ITEM</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
+            </div>
+            <div style="flex-grow:1;">${mercsHTML}</div>
+            <div style="border-top:1px solid #000; margin-top:10px; font-weight:bold;">TOTAL: R$ ${document.getElementById('i-v-total').value}</div>
+            ${infoPag}
+            <div style="margin-top:auto; padding-top:5px;"><b>VENDEDOR:</b> ${f('i-vend')} | <b>SUPERVISOR:</b> ${f('i-super')}</div>
+        </div>`;
 
         document.getElementById('print-area').innerHTML = viaConteudo + viaConteudo;
         window.print();
@@ -172,33 +183,16 @@
     function enviarWhatsApp() {
         const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
         const f = (id) => document.getElementById(id).value.toUpperCase();
-        
         let listaItens = "";
         document.querySelectorAll('.m-desc').forEach((el, i) => {
-            const desc = el.value.toUpperCase();
-            const un = document.querySelectorAll('.m-un')[i].value.toUpperCase();
-            const val = parseFloat(document.querySelectorAll('.m-val')[i].value) || 0;
-            if(desc) {
-                listaItens += `• ${desc} (${un}) - R$ ${val.toFixed(2)}\n`;
-            }
+            if(el.value) listaItens += `• ${el.value.toUpperCase()} - R$ ${parseFloat(document.querySelectorAll('.m-val')[i].value).toFixed(2)}\n`;
         });
 
-        let mensagem = `*PEDIDO JÁ*\n`;
-        mensagem += `----------------------------\n`;
-        mensagem += `*DATA:* ${formatarData(document.getElementById('i-data').value)}\n`;
-        mensagem += `*ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n`;
-        mensagem += `*CLIENTE:* ${f('i-cliente')}\n`;
-        mensagem += `*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')}\n`;
-        mensagem += `*BAIRRO:* ${f('i-bairro')} - ${f('i-cidade')}\n`;
-        mensagem += `*REF:* ${f('i-ref')}\n\n`;
-        mensagem += `*ITENS:*\n${listaItens}\n`;
-        mensagem += `*SUBTOTAL:* R$ ${document.getElementById('i-v-merc').value}\n`;
-        mensagem += `*FRETE:* R$ ${document.getElementById('i-v-frete').value || '0.00'}\n`;
-        mensagem += `*TOTAL GERAL: R$ ${document.getElementById('i-v-total').value}*\n\n`;
-        mensagem += `*VENDEDOR:* ${f('i-vend')}`;
+        let msgPag = `*PAGAMENTO:* ${f('i-pagamento')}\n`;
+        if(f('i-pagamento') === 'CARTÃO') msgPag += document.getElementById('detalhe-pagamento').innerText + "\n";
 
-        const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
-        window.open(url, '_blank');
+        let mensagem = `*PEDIDO JÁ*\n*DATA:* ${formatarData(document.getElementById('i-data').value)}\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')}\n*BAIRRO:* ${f('i-bairro')}\n*REF:* ${f('i-ref')}\n\n*ITENS:*\n${listaItens}\n*TOTAL:* R$ ${document.getElementById('i-v-total').value}\n${msgPag}\n*VENDEDOR:* ${f('i-vend')}\n*SUPERVISOR:* ${f('i-super')}`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`);
     }
 </script>
 </body>
