@@ -9,10 +9,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
 
     <style>
-        /* --- ESTILO BASE --- */
         body { font-family: sans-serif; background: #e9ecef; margin: 0; padding: 10px; }
         
-        /* FORÇAR CAIXA ALTA EM TODOS OS INPUTS */
         input, textarea, select { 
             text-transform: uppercase; 
             width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; 
@@ -24,7 +22,6 @@
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
         
-        /* REMOÇÃO DAS SETINHAS DOS CAMPOS NUMÉRICOS */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
@@ -34,7 +31,6 @@
             display: flex; align-items: center; justify-content: center; background: #1a73e8;
         }
 
-        /* --- CONFIGURAÇÃO DE IMPRESSÃO (A4 PAISAGEM - 2 VIAS) --- */
         @media print {
             @page { size: A4 landscape; margin: 5mm; }
             body * { visibility: hidden; }
@@ -85,7 +81,7 @@
             <input type="number" step="0.01" placeholder="0,00" style="flex: 1.5;" class="m-val" oninput="calcularTotais()">
         </div>
     </div>
-    <button onclick="adicionarLinha()" style="width:100%; margin-bottom:15px;">+ ADICIONAR ITEM</button>
+    <button onclick="adicionarLinha()" style="width:100%; margin-bottom:15px; background:#f0f0f0; border:1px solid #ccc; border-radius:4px; padding:8px; cursor:pointer;">+ ADICIONAR ITEM</button>
 
     <div style="display: flex; gap: 5px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
         <div class="campo" style="flex: 1;"><label>Subtotal</label><input type="number" id="i-v-merc" readonly></div>
@@ -97,16 +93,14 @@
 
     <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 20px;">
         <button class="btn-acao" onclick="gerarPDF()">Gerar PDF / Imprimir</button>
-        <button class="btn-acao" style="background: #25d366;" onclick="enviarWhatsApp()">WhatsApp</button>
-        <button class="btn-acao" style="background: #6c757d;" onclick="location.reload()">Novo Pedido</button>
+        <button class="btn-acao" style="background: #25d366;" onclick="enviarWhatsApp()">WhatsApp Completo</button>
+        <button class="btn-acao" style="background: #6c757d;" onclick="if(confirm('Limpar tudo?')) location.reload()">Novo Pedido</button>
     </div>
 </div>
 
 <div id="print-area"></div>
 
 <script>
-    const taxasCredito = { "1": 3.37, "2": 4.90, "3": 6.80, "4": 7.90, "5": 9.80, "6": 11.49, "7": 12.80, "8": 14.87, "9": 15.83, "10": 16.87, "11": 18.89, "12": 20.10 };
-
     window.onload = function() {
         document.getElementById('i-data').value = new Date().toISOString().substring(0, 10);
         document.getElementById('i-vend').value = localStorage.getItem('vendedor') || "";
@@ -159,20 +153,16 @@
                 <div style="margin-bottom:3px;"><b>ENDEREÇO:</b> ${f('i-rua')}, ${f('i-num')}</div>
                 <div style="margin-bottom:3px;"><b>BAIRRO:</b> ${f('i-bairro')} - ${f('i-cidade')}</div>
                 <div style="margin-bottom:10px;"><b>REF:</b> ${f('i-ref')}</div>
-                
                 <div style="border-bottom:1px solid #000; font-weight:bold; display:flex; font-size:10px; margin-bottom:5px;">
                     <div style="flex:3">ITEM</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
                 </div>
                 <div style="flex-grow:1;">${mercsHTML}</div>
-                
                 <div style="border-top:1px solid #000; padding-top:5px; margin-top:10px;">
                     <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:12px;">
                         <span>TOTAL DO PEDIDO:</span><span>R$ ${document.getElementById('i-v-total').value}</span>
                     </div>
                 </div>
-                <div style="margin-top:20px; border-top:1px solid #ccc; padding-top:5px;">
-                    <b>VENDEDOR:</b> ${f('i-vend')}
-                </div>
+                <div style="margin-top:20px; border-top:1px solid #ccc; padding-top:5px;"><b>VENDEDOR:</b> ${f('i-vend')}</div>
             </div>`;
 
         document.getElementById('print-area').innerHTML = viaConteudo + viaConteudo;
@@ -180,10 +170,35 @@
     }
 
     function enviarWhatsApp() {
-        const cliente = document.getElementById('i-cliente').value.toUpperCase();
-        const total = document.getElementById('i-v-total').value;
-        const msg = `*PEDIDO JÁ*\n\n*CLIENTE:* ${cliente}\n*TOTAL:* R$ ${total}`;
-        window.open(`https://api.whatsapp.com/send?text=${window.encodeURIComponent(msg)}`);
+        const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
+        const f = (id) => document.getElementById(id).value.toUpperCase();
+        
+        let listaItens = "";
+        document.querySelectorAll('.m-desc').forEach((el, i) => {
+            const desc = el.value.toUpperCase();
+            const un = document.querySelectorAll('.m-un')[i].value.toUpperCase();
+            const val = parseFloat(document.querySelectorAll('.m-val')[i].value) || 0;
+            if(desc) {
+                listaItens += `• ${desc} (${un}) - R$ ${val.toFixed(2)}\n`;
+            }
+        });
+
+        let mensagem = `*PEDIDO JÁ*\n`;
+        mensagem += `----------------------------\n`;
+        mensagem += `*DATA:* ${formatarData(document.getElementById('i-data').value)}\n`;
+        mensagem += `*ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n`;
+        mensagem += `*CLIENTE:* ${f('i-cliente')}\n`;
+        mensagem += `*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')}\n`;
+        mensagem += `*BAIRRO:* ${f('i-bairro')} - ${f('i-cidade')}\n`;
+        mensagem += `*REF:* ${f('i-ref')}\n\n`;
+        mensagem += `*ITENS:*\n${listaItens}\n`;
+        mensagem += `*SUBTOTAL:* R$ ${document.getElementById('i-v-merc').value}\n`;
+        mensagem += `*FRETE:* R$ ${document.getElementById('i-v-frete').value || '0.00'}\n`;
+        mensagem += `*TOTAL GERAL: R$ ${document.getElementById('i-v-total').value}*\n\n`;
+        mensagem += `*VENDEDOR:* ${f('i-vend')}`;
+
+        const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
+        window.open(url, '_blank');
     }
 </script>
 </body>
