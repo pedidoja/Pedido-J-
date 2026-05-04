@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pedido Já</title>
     <style>
-        /* ESTILOS DO APP - MANTIDOS CONFORME SOLICITADO */
+        /* ESTILOS DO APP */
         body { font-family: sans-serif; background: #e9ecef; margin: 0; padding: 10px; -webkit-print-color-adjust: exact; }
         input, textarea, select { text-transform: uppercase; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; }
         .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -13,7 +13,6 @@
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
         
-        /* Remove setinhas conforme pedido anterior */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
@@ -25,35 +24,40 @@
 
         #print-area { display: none; }
 
-        /* AJUSTE PARA NITIDEZ E PAISAGEM NO CELULAR */
+        /* AJUSTE PARA EVITAR PÁGINA EM BRANCO */
         @media print {
             @page { 
-                size: A4 landscape; /* Força A4 Paisagem */
-                margin: 0; 
+                size: landscape; 
+                margin: 0; /* Remove margens do navegador */
             }
             html, body { 
-                width: 297mm; /* Largura exata do A4 deitado para evitar embaçado */
-                height: 210mm;
-                background: #fff;
+                width: 100%; 
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden; /* Impede a criação de segunda página */
             }
             .no-print { display: none !important; }
             #print-area { 
                 display: flex !important; 
                 flex-direction: row !important; 
                 justify-content: space-around !important; 
+                align-items: flex-start !important;
                 width: 100% !important; 
-                padding: 10mm;
-                box-sizing: border-box;
+                height: 100% !important;
+                padding: 5mm !important;
+                box-sizing: border-box !important;
+                background: white !important;
             }
             .via { 
-                width: 135mm !important; /* Tamanho fixo para garantir nitidez */
+                width: 46% !important; /* Reduzido levemente para garantir espaço */
                 border: 1.5px solid #000 !important; 
-                padding: 10px; 
+                padding: 8px; 
                 box-sizing: border-box; 
                 color: #000 !important;
-                font-size: 13px; /* Aumentado levemente para leitura no PDF */
+                font-size: 12px;
+                max-height: 95vh; /* Garante que não estique para baixo */
             }
-            * { color: #000 !important; border-color: #000 !important; -webkit-print-color-adjust: exact; }
         }
     </style>
 </head>
@@ -181,8 +185,8 @@
         document.querySelectorAll('.m-desc').forEach((el, i) => {
             const val = parseFloat(document.querySelectorAll('.m-val')[i].value) || 0;
             if(el.value) {
-                mercsHTML += `<div style="display:flex; border-bottom:1px solid #000; padding:4px 0;">
-                    <div style="flex:3">${el.value}</div>
+                mercsHTML += `<div style="display:flex; border-bottom:1px solid #000; padding:2px 0;">
+                    <div style="flex:3; font-size:11px;">${el.value}</div>
                     <div style="flex:0.6; text-align:center">${document.querySelectorAll('.m-un')[i].value}</div>
                     <div style="flex:1.2; text-align:right">R$ ${val.toFixed(2)}</div>
                 </div>`;
@@ -194,33 +198,33 @@
 
         const via = `
             <div class="via">
-                <div style="text-align:center; font-size:20px; font-weight:bold; border-bottom:2px solid #000; margin-bottom:10px;">PEDIDO JÁ</div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <div style="text-align:center; font-size:18px; font-weight:bold; border-bottom:2px solid #000; margin-bottom:5px;">PEDIDO JÁ</div>
+                <div style="display:flex; justify-content:space-between; font-size:11px;">
                     <span>DATA: ${formatarData(document.getElementById('i-data').value)}</span>
                     <span>ENTREGA: ${formatarData(document.getElementById('i-entrega').value)}</span>
                 </div>
-                <div style="margin-bottom:3px;"><b>CLIENTE:</b> ${f('i-cliente')}</div>
-                <div style="margin-bottom:3px;"><b>ENDEREÇO:</b> ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}</div>
-                <div style="margin-bottom:10px;"><b>REF:</b> ${f('i-ref')}</div>
-                <div style="display:flex; font-weight:bold; border-bottom:1.5px solid #000; font-size:12px; background:#eee;">
+                <div style="margin-top:5px;"><b>CLIENTE:</b> ${f('i-cliente')}</div>
+                <div><b>ENDEREÇO:</b> ${f('i-rua')}, ${f('i-num')}</div>
+                <div style="margin-bottom:5px;"><b>BAIRRO:</b> ${f('i-bairro')}</div>
+                <div style="display:flex; font-weight:bold; border-bottom:1.5px solid #000; font-size:10px; background:#f0f0f0;">
                     <div style="flex:3">ITEM</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
                 </div>
-                <div style="min-height:120px;">${mercsHTML}</div>
-                <div style="border-top:1.5px solid #000; margin-top:10px; padding-top:5px;">
-                    <div style="display:flex; justify-content:space-between;"><span>SUBTOTAL:</span><span>R$ ${document.getElementById('i-v-merc').value}</span></div>
-                    <div style="display:flex; justify-content:space-between;"><span>FRETE:</span><span>R$ ${document.getElementById('i-v-frete').value || "0.00"}</span></div>
-                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:16px; border-top:1px solid #000; margin-top:3px;"><span>TOTAL:</span><span>R$ ${document.getElementById('i-v-total').value}</span></div>
+                <div style="min-height:50px;">${mercsHTML}</div>
+                <div style="border-top:1.5px solid #000; margin-top:5px; font-size:11px;">
+                    <div style="display:flex; justify-content:space-between;"><span>SUBTOTAL: R$ ${document.getElementById('i-v-merc').value}</span><span>FRETE: R$ ${document.getElementById('i-v-frete').value || "0.00"}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px; border-top:1px solid #000; margin-top:2px;"><span>TOTAL:</span><span>R$ ${document.getElementById('i-v-total').value}</span></div>
                 </div>
-                <div style="margin-top:10px; border:1px solid #000; padding:5px; font-size:12px;">${pagInfo}</div>
-                <div style="margin-top:15px; font-weight:bold; border-top:1px dashed #000; padding-top:5px; font-size:11px; text-align:center;">
+                <div style="margin-top:5px; border:1px solid #000; padding:3px; font-size:10px;">${pagInfo}</div>
+                <div style="margin-top:10px; font-weight:bold; border-top:1px dashed #000; font-size:10px; text-align:center;">
                     VENDEDOR: ${f('i-vend')} | SUPERVISOR: ${f('i-super')}
                 </div>
             </div>`;
 
         document.getElementById('print-area').innerHTML = via + via;
-
-        // Pequeno atraso para garantir que o celular renderize tudo antes de abrir a janela de impressão
-        setTimeout(() => { window.print(); }, 500);
+        
+        setTimeout(() => { 
+            window.print(); 
+        }, 300);
     }
 
     function enviarWhatsApp() {
