@@ -12,3 +12,8 @@ self.addEventListener('fetch', e => {
     caches.match(e.request).then(res => res || fetch(e.request))
   );
 });
+
+self.addEventListener('fetch', function(event) {
+  // Esse código vazio já é o suficiente para o celular 
+  // permitir a instalação do ícone na tela inicial.
+});
