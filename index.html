@@ -24,39 +24,40 @@
 
         #print-area { display: none; }
 
-        /* AJUSTE PARA EVITAR PÁGINA EM BRANCO */
+        /* AJUSTE FINAL ANTI-FOLHA EM BRANCO */
         @media print {
             @page { 
                 size: landscape; 
-                margin: 0; /* Remove margens do navegador */
+                margin: 0mm; 
             }
             html, body { 
                 width: 100%; 
-                height: 100%;
-                margin: 0;
-                padding: 0;
-                overflow: hidden; /* Impede a criação de segunda página */
+                height: 99%; /* Reduzido levemente para não "transbordar" */
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: hidden !important;
             }
             .no-print { display: none !important; }
             #print-area { 
                 display: flex !important; 
                 flex-direction: row !important; 
-                justify-content: space-around !important; 
+                justify-content: center !important; 
                 align-items: flex-start !important;
                 width: 100% !important; 
                 height: 100% !important;
+                gap: 10mm; /* Espaço entre as vias */
                 padding: 5mm !important;
                 box-sizing: border-box !important;
                 background: white !important;
             }
             .via { 
-                width: 46% !important; /* Reduzido levemente para garantir espaço */
+                width: 44% !important; /* Reduzido mais um pouco para garantir que caiba no celular */
                 border: 1.5px solid #000 !important; 
                 padding: 8px; 
                 box-sizing: border-box; 
                 color: #000 !important;
-                font-size: 12px;
-                max-height: 95vh; /* Garante que não estique para baixo */
+                font-size: 11px;
+                page-break-inside: avoid;
             }
         }
     </style>
@@ -186,7 +187,7 @@
             const val = parseFloat(document.querySelectorAll('.m-val')[i].value) || 0;
             if(el.value) {
                 mercsHTML += `<div style="display:flex; border-bottom:1px solid #000; padding:2px 0;">
-                    <div style="flex:3; font-size:11px;">${el.value}</div>
+                    <div style="flex:3; font-size:10px;">${el.value}</div>
                     <div style="flex:0.6; text-align:center">${document.querySelectorAll('.m-un')[i].value}</div>
                     <div style="flex:1.2; text-align:right">R$ ${val.toFixed(2)}</div>
                 </div>`;
@@ -198,24 +199,23 @@
 
         const via = `
             <div class="via">
-                <div style="text-align:center; font-size:18px; font-weight:bold; border-bottom:2px solid #000; margin-bottom:5px;">PEDIDO JÁ</div>
-                <div style="display:flex; justify-content:space-between; font-size:11px;">
+                <div style="text-align:center; font-size:16px; font-weight:bold; border-bottom:2px solid #000; margin-bottom:5px;">PEDIDO JÁ</div>
+                <div style="display:flex; justify-content:space-between; font-size:10px;">
                     <span>DATA: ${formatarData(document.getElementById('i-data').value)}</span>
                     <span>ENTREGA: ${formatarData(document.getElementById('i-entrega').value)}</span>
                 </div>
-                <div style="margin-top:5px;"><b>CLIENTE:</b> ${f('i-cliente')}</div>
-                <div><b>ENDEREÇO:</b> ${f('i-rua')}, ${f('i-num')}</div>
-                <div style="margin-bottom:5px;"><b>BAIRRO:</b> ${f('i-bairro')}</div>
-                <div style="display:flex; font-weight:bold; border-bottom:1.5px solid #000; font-size:10px; background:#f0f0f0;">
+                <div style="margin-top:5px; font-size:11px;"><b>CLIENTE:</b> ${f('i-cliente')}</div>
+                <div style="font-size:11px;"><b>ENDEREÇO:</b> ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}</div>
+                <div style="display:flex; font-weight:bold; border-bottom:1.5px solid #000; font-size:9px; background:#f0f0f0; margin-top:5px;">
                     <div style="flex:3">ITEM</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
                 </div>
                 <div style="min-height:50px;">${mercsHTML}</div>
-                <div style="border-top:1.5px solid #000; margin-top:5px; font-size:11px;">
+                <div style="border-top:1.5px solid #000; margin-top:5px; font-size:10px;">
                     <div style="display:flex; justify-content:space-between;"><span>SUBTOTAL: R$ ${document.getElementById('i-v-merc').value}</span><span>FRETE: R$ ${document.getElementById('i-v-frete').value || "0.00"}</span></div>
-                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:14px; border-top:1px solid #000; margin-top:2px;"><span>TOTAL:</span><span>R$ ${document.getElementById('i-v-total').value}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:13px; border-top:1px solid #000; margin-top:2px;"><span>TOTAL:</span><span>R$ ${document.getElementById('i-v-total').value}</span></div>
                 </div>
-                <div style="margin-top:5px; border:1px solid #000; padding:3px; font-size:10px;">${pagInfo}</div>
-                <div style="margin-top:10px; font-weight:bold; border-top:1px dashed #000; font-size:10px; text-align:center;">
+                <div style="margin-top:5px; border:1px solid #000; padding:3px; font-size:9px;">${pagInfo}</div>
+                <div style="margin-top:10px; font-weight:bold; border-top:1px dashed #000; font-size:9px; text-align:center;">
                     VENDEDOR: ${f('i-vend')} | SUPERVISOR: ${f('i-super')}
                 </div>
             </div>`;
