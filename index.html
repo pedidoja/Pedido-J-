@@ -171,7 +171,11 @@
                 <div style="flex:3">ITEM</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
             </div>
             <div style="flex-grow:1;">${mercsHTML}</div>
-            <div style="border-top:1px solid #000; margin-top:10px; font-weight:bold;">TOTAL: R$ ${document.getElementById('i-v-total').value}</div>
+            <div style="border-top:1px solid #000; margin-top:10px;">
+                <div style="display:flex; justify-content:space-between;"><span>SUBTOTAL:</span><span>R$ ${document.getElementById('i-v-merc').value}</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>FRETE:</span><span>R$ ${document.getElementById('i-v-frete').value || "0.00"}</span></div>
+                <div style="display:flex; justify-content:space-between; font-weight:bold;"><span>TOTAL:</span><span>R$ ${document.getElementById('i-v-total').value}</span></div>
+            </div>
             ${infoPag}
             <div style="margin-top:auto; padding-top:5px;"><b>VENDEDOR:</b> ${f('i-vend')} | <b>SUPERVISOR:</b> ${f('i-super')}</div>
         </div>`;
@@ -189,9 +193,11 @@
         });
 
         let msgPag = `*PAGAMENTO:* ${f('i-pagamento')}\n`;
-        if(f('i-pagamento') === 'CARTÃO') msgPag += document.getElementById('detalhe-pagamento').innerText + "\n";
+        if(f('i-pagamento') === 'CARTÃO') {
+            msgPag += document.getElementById('detalhe-pagamento').innerText + "\n";
+        }
 
-        let mensagem = `*PEDIDO JÁ*\n*DATA:* ${formatarData(document.getElementById('i-data').value)}\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')}\n*BAIRRO:* ${f('i-bairro')}\n*REF:* ${f('i-ref')}\n\n*ITENS:*\n${listaItens}\n*TOTAL:* R$ ${document.getElementById('i-v-total').value}\n${msgPag}\n*VENDEDOR:* ${f('i-vend')}\n*SUPERVISOR:* ${f('i-super')}`;
+        let mensagem = `*PEDIDO JÁ*\n*DATA:* ${formatarData(document.getElementById('i-data').value)}\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')}\n*BAIRRO:* ${f('i-bairro')}\n*REF:* ${f('i-ref')}\n\n*ITENS:*\n${listaItens}\n*SUBTOTAL:* R$ ${document.getElementById('i-v-merc').value}\n*FRETE:* R$ ${document.getElementById('i-v-frete').value || '0.00'}\n*TOTAL:* R$ ${document.getElementById('i-v-total').value}\n\n${msgPag}\n*VENDEDOR:* ${f('i-vend')}\n*SUPERVISOR:* ${f('i-super')}`;
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`);
     }
 </script>
