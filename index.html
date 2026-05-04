@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pedido Já</title>
     <style>
-        /* ESTILOS DO APP */
+        /* ESTILOS DO APP - IGUAL AO PC */
         body { font-family: sans-serif; background: #e9ecef; margin: 0; padding: 10px; }
         input, textarea, select { text-transform: uppercase; width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; }
         .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
@@ -13,6 +13,7 @@
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
         
+        /* Remove setinhas dos campos de número */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
 
@@ -22,19 +23,19 @@
         
         #detalhe-pagamento { background: #fdf2f2; border: 1px solid #ffc1c1; padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none; font-size: 14px; font-weight: bold; color: #333; }
 
-        /* AREA DE IMPRESSAO OCULTA NA TELA */
+        /* AREA DE IMPRESSAO - SÓ APARECE NA HORA DE IMPRIMIR */
         #print-area { display: none; }
 
-        /* ESTILOS DE IMPRESSÃO */
         @media print {
             @page { size: landscape; margin: 5mm; }
-            html, body { background: #fff; }
+            html, body { background: #fff; width: 100%; }
             .no-print { display: none !important; }
             #print-area { 
                 display: flex !important; 
                 flex-direction: row !important; 
                 justify-content: space-between !important; 
                 width: 100% !important; 
+                background: white !important;
             }
             .via { 
                 width: 48% !important; 
@@ -45,6 +46,7 @@
                 font-size: 12px;
             }
             * { color: #000 !important; border-color: #000 !important; }
+            .total-final { font-size: 16px !important; font-weight: bold; }
         }
     </style>
 </head>
@@ -101,6 +103,7 @@
         <div class="campo" style="flex: 1;"><label>Supervisor</label><input type="text" id="i-super" oninput="salvarDadosFixos()"></div>
     </div>
 
+    <!-- BOTOES QUE APARECEM NA TELA -->
     <button class="btn-acao btn-pdf" onclick="gerarPDF()">GERAR PDF / IMPRIMIR</button>
     <button class="btn-acao btn-zap" onclick="enviarWhatsApp()">ENVIAR WHATSAPP</button>
 </div>
