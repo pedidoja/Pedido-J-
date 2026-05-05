@@ -200,7 +200,6 @@
         const vEntrada = parseFloat(document.getElementById('i-v-entrada').value) || 0;
         const resumoPagamento = montarTextoPagamento(vTotal, vEntrada, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
         
-        // AJUSTE SOLICITADO: Datas uma abaixo da outra no Recibo PDF
         const viaHTML = `<div class="via">
             <div class="header-p">PEDIDO JÁ</div>
             <div style="display:flex; flex-direction:column; gap:2px;">
@@ -215,7 +214,7 @@
             <div style="margin-top:8px; border-bottom:1px solid #000; font-weight:bold; display:flex; font-size:11px">
                 <div style="flex:3">MERCADORIA</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
             </div>
-            <div style="min-height:80px">${mercsHTML}</div>
+            <div style="min-height:80px; margin-top:15px;">${mercsHTML}</div>
             <div style="margin-top:auto; border-top:1px solid #000; padding-top:3px">
                 <div style="display:flex; justify-content:space-between"><span>SUBTOTAL:</span><span>R$ ${document.getElementById('i-v-merc').value}</span></div>
                 <div style="display:flex; justify-content:space-between"><span>FRETE:</span><span>R$ ${document.getElementById('i-v-frete').value || "0.00"}</span></div>
