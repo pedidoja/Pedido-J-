@@ -3,126 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PEDIDO JÁ - FINAL</title>
+    <title>PEDIDO JÁ - VERSÃO WHATSAPP TOTAL</title>
     <style>
-        body { font-family: sans-serif; background: #f0f0f0; padding: 10px; margin: 0; }
-        .box { background: #fff; padding: 15px; border-radius: 10px; max-width: 500px; margin: auto; border: 1px solid #ccc; }
-        .header { text-align: center; color: #1a73e8; font-weight: bold; margin-bottom: 15px; border-bottom: 2px solid #1a73e8; padding-bottom: 5px; }
-        label { display: block; font-size: 11px; font-weight: bold; margin-top: 10px; color: #555; }
-        input, textarea { width: 100%; padding: 12px; margin-top: 4px; border: 1px solid #999; border-radius: 6px; box-sizing: border-box; font-size: 16px; text-transform: uppercase; }
-        .btn-zap { background: #25d366; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 15px; font-size: 16px; }
-        .btn-pdf { background: #1a73e8; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 8px; font-size: 16px; }
+        body { font-family: sans-serif; background: #e8ecef; margin: 0; padding: 10px; }
+        .card { background: #fff; padding: 15px; border-radius: 10px; max-width: 500px; margin: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        h2 { text-align: center; color: #075E54; margin-top: 0; }
+        label { display: block; font-size: 11px; font-weight: bold; margin-top: 10px; color: #333; }
+        input, textarea { width: 100%; padding: 12px; margin-top: 4px; border: 2px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        input:focus, textarea:focus { border-color: #25d366; outline: none; }
         
-        #area-print { display: none; }
+        .btn-zap { background: #25d366; color: white; border: none; width: 100%; padding: 18px; border-radius: 8px; font-weight: bold; margin-top: 20px; font-size: 18px; cursor: pointer; box-shadow: 0 4px 0 #128C7E; }
+        .btn-zap:active { box-shadow: none; transform: translateY(4px); }
+        
+        .btn-pdf { background: #1a73e8; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 10px; font-size: 16px; opacity: 0.9; }
+
+        /* Estilo da Via de Impressão */
+        #print-area { display: none; }
         @media print {
             body * { visibility: hidden; }
-            #area-print, #area-print * { visibility: visible; }
-            #area-print { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
-            .recibo { border: 2px solid black; padding: 15px; margin-bottom: 20px; font-size: 14px; line-height: 1.5; color: black; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
+            .ticket { border: 2px solid #000; padding: 20px; font-size: 16px; line-height: 1.6; color: #000; margin-bottom: 20px; }
         }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <div class="header">PEDIDO JÁ</div>
+<div class="card">
+    <h2>PEDIDO JÁ ✅</h2>
 
     <label>NOME DO CLIENTE</label>
-    <input type="text" id="cli" oninput="save()">
+    <input type="text" id="cli" placeholder="Digite o nome...">
     
-    <label>TELEFONE / WHATSAPP</label>
-    <input type="tel" id="tel" oninput="save()">
+    <label>WHATSAPP / CELULAR</label>
+    <input type="tel" id="tel" placeholder="(00) 00000-0000">
 
-    <label>RUA E NÚMERO</label>
-    <input type="text" id="rua" oninput="save()">
+    <label>ENDEREÇO COMPLETO (RUA E Nº)</label>
+    <input type="text" id="end" placeholder="Rua exemplo, 123">
 
     <label>BAIRRO</label>
-    <input type="text" id="bai" oninput="save()">
+    <input type="text" id="bai" placeholder="Bairro exemplo">
 
     <label>CIDADE</label>
-    <input type="text" id="cid" oninput="save()">
+    <input type="text" id="cid" placeholder="Cidade exemplo">
 
     <label>PONTO DE REFERÊNCIA</label>
-    <input type="text" id="ref" oninput="save()">
+    <input type="text" id="ref" placeholder="Perto de onde?">
 
-    <label>DESCRIÇÃO DO PEDIDO (ITENS E VALORES)</label>
-    <textarea id="ped" style="height: 100px;" oninput="save()" placeholder="Ex: 1 Cama - R$ 500"></textarea>
+    <label>MERCADORIAS (ITENS)</label>
+    <textarea id="it" style="height: 100px;" placeholder="Ex: 1 Cama Box R$ 500"></textarea>
 
-    <div style="background:#eee; padding:10px; border-radius:5px; margin-top:10px;">
-        <label>VALOR DO FRETE (R$)</label>
-        <input type="number" id="fre" oninput="save()">
-        <label>VALOR TOTAL (R$)</label>
-        <input type="text" id="tot" oninput="save()">
+    <div style="background:#f9f9f9; padding:10px; border:1px solid #ddd; margin-top:10px; border-radius:5px;">
+        <label>VALOR DO FRETE</label>
+        <input type="text" id="fr" placeholder="R$ 0,00">
+        
+        <label>TOTAL DO PEDIDO</label>
+        <input type="text" id="to" placeholder="R$ 0,00" style="font-weight:bold; color:red;">
     </div>
 
     <label>FORMA DE PAGAMENTO</label>
-    <input type="text" id="pag" oninput="save()">
+    <input type="text" id="pa" placeholder="Dinheiro, Pix, Cartão...">
 
     <label>VENDEDOR</label>
-    <input type="text" id="ven" oninput="save()">
+    <input type="text" id="ve" placeholder="Nome do vendedor">
 
-    <button class="btn-zap" onclick="enviarZap()">ENVIAR PELO WHATSAPP</button>
-    <button class="btn-pdf" onclick="gerarPDF()">GERAR PDF / IMPRIMIR</button>
+    <button class="btn-zap" onclick="enviarZap()">MANDAR NO WHATSAPP</button>
+    <button class="btn-pdf" onclick="gerarPDF()">IMPRIMIR RECIBO</button>
 </div>
 
-<div id="area-print"></div>
+<div id="print-area"></div>
 
 <script>
-    // Memória global para evitar que o celular "esqueça"
-    var dados = {};
-
-    function save() {
-        dados.cliente = document.getElementById('cli').value.toUpperCase();
-        dados.telefone = document.getElementById('tel').value;
-        dados.rua = document.getElementById('rua').value.toUpperCase();
-        dados.bairro = document.getElementById('bai').value.toUpperCase();
-        dados.cidade = document.getElementById('cid').value.toUpperCase();
-        dados.referencia = document.getElementById('ref').value.toUpperCase();
-        dados.itens = document.getElementById('ped').value.toUpperCase();
-        dados.frete = document.getElementById('fre').value;
-        dados.total = document.getElementById('tot').value;
-        dados.pagamento = document.getElementById('pag').value.toUpperCase();
-        dados.vendedor = document.getElementById('ven').value.toUpperCase();
-    }
-
     function enviarZap() {
-        save(); // Força a última captura
-        var msg = "*PEDIDO JÁ*\n\n" +
-                  "*CLIENTE:* " + (dados.cliente || "---") + "\n" +
-                  "*TEL:* " + (dados.telefone || "---") + "\n" +
-                  "*ENDEREÇO:* " + (dados.rua || "---") + "\n" +
-                  "*BAIRRO:* " + (dados.bairro || "---") + "\n" +
-                  "*CIDADE:* " + (dados.cidade || "---") + "\n" +
-                  "*REF:* " + (dados.referencia || "---") + "\n\n" +
-                  "*ITENS:*\n" + (dados.itens || "---") + "\n\n" +
-                  "*FRETE:* R$ " + (dados.frete || "0,00") + "\n" +
-                  "*TOTAL:* R$ " + (dados.total || "0,00") + "\n" +
-                  "*PAGTO:* " + (dados.pagamento || "---") + "\n\n" +
-                  "*VENDEDOR:* " + (dados.vendedor || "---");
+        // Coleta manual campo por campo para não ter erro
+        var c = document.getElementById('cli').value.toUpperCase();
+        var t = document.getElementById('tel').value;
+        var e = document.getElementById('end').value.toUpperCase();
+        var b = document.getElementById('bai').value.toUpperCase();
+        var i = document.getElementById('cid').value.toUpperCase();
+        var r = document.getElementById('ref').value.toUpperCase();
+        var it = document.getElementById('it').value.toUpperCase();
+        var fr = document.getElementById('fr').value;
+        var to = document.getElementById('to').value;
+        var pa = document.getElementById('pa').value.toUpperCase();
+        var ve = document.getElementById('ve').value.toUpperCase();
 
-        window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(msg);
+        var msg = "*PEDIDO JÁ*\n\n" +
+                  "*CLIENTE:* " + c + "\n" +
+                  "*TEL:* " + t + "\n" +
+                  "*RUA:* " + e + "\n" +
+                  "*BAIRRO:* " + b + "\n" +
+                  "*CIDADE:* " + i + "\n" +
+                  "*REF:* " + r + "\n\n" +
+                  "*ITENS:* \n" + it + "\n\n" +
+                  "*FRETE:* " + fr + "\n" +
+                  "*TOTAL:* " + to + "\n" +
+                  "*PAGTO:* " + pa + "\n\n" +
+                  "*VENDEDOR:* " + ve;
+
+        // O segredo: usamos o link direto do WhatsApp Web/App
+        var win = window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), '_blank');
+        if (win) {
+            win.focus();
+        } else {
+            // Se o navegador bloquear o pop-up, ele tenta por aqui:
+            window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(msg);
+        }
     }
 
     function gerarPDF() {
-        save();
-        var layout = "<div class='recibo'>" +
-                     "<h1 style='text-align:center'>PEDIDO JÁ</h1>" +
-                     "<p><b>CLIENTE:</b> " + dados.cliente + "</p>" +
-                     "<p><b>FONE:</b> " + dados.telefone + "</p>" +
-                     "<p><b>ENDEREÇO:</b> " + dados.rua + "</p>" +
-                     "<p><b>BAIRRO:</b> " + dados.bairro + " | <b>CIDADE:</b> " + dados.cidade + "</p>" +
-                     "<p><b>REF:</b> " + dados.referencia + "</p>" +
-                     "<hr>" +
-                     "<p><b>ITENS:</b><br>" + dados.itens.replace(/\n/g, '<br>') + "</p>" +
-                     "<hr>" +
-                     "<p><b>FRETE:</b> R$ " + dados.frete + "</p>" +
-                     "<p style='font-size:18px'><b>TOTAL: R$ " + dados.total + "</b></p>" +
-                     "<p><b>PAGAMENTO:</b> " + dados.pagamento + "</p>" +
-                     "<p><b>VENDEDOR:</b> " + dados.vendedor + "</p>" +
-                     "</div>";
+        var c = document.getElementById('cli').value.toUpperCase();
+        var t = document.getElementById('tel').value;
+        var e = document.getElementById('end').value.toUpperCase();
+        var b = document.getElementById('bai').value.toUpperCase();
+        var i = document.getElementById('cid').value.toUpperCase();
+        var r = document.getElementById('ref').value.toUpperCase();
+        var it = document.getElementById('it').value.toUpperCase();
+        var fr = document.getElementById('fr').value;
+        var to = document.getElementById('to').value;
+        var pa = document.getElementById('pa').value.toUpperCase();
+        var ve = document.getElementById('ve').value.toUpperCase();
 
-        document.getElementById('area-print').innerHTML = layout + layout;
-        setTimeout(function(){ window.print(); }, 500);
+        var conteudo = "<div class='ticket'>" +
+                       "<h1 style='text-align:center'>PEDIDO JÁ</h1>" +
+                       "<p><b>CLIENTE:</b> " + c + " <br> <b>TEL:</b> " + t + "</p>" +
+                       "<p><b>ENDEREÇO:</b> " + e + " <br> <b>BAIRRO:</b> " + b + " - " + i + "</p>" +
+                       "<p><b>REF:</b> " + r + "</p>" +
+                       "<hr>" +
+                       "<p><b>ITENS:</b><br>" + it.replace(/\n/g, "<br>") + "</p>" +
+                       "<hr>" +
+                       "<p><b>FRETE:</b> " + fr + "</p>" +
+                       "<h2 style='color:red'>TOTAL: " + to + "</h2>" +
+                       "<p><b>PAGAMENTO:</b> " + pa + "</p>" +
+                       "<p><b>VENDEDOR:</b> " + ve + "</p>" +
+                       "</div>";
+
+        document.getElementById('print-area').innerHTML = conteudo + "<br><hr style='border:1px dashed #000'><br>" + conteudo;
+        window.print();
     }
 </script>
 </body>
