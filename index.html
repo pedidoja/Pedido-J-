@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PEDIDO JÁ - MODELO ORIGINAL</title>
+    <title>PEDIDO JÁ - OFICIAL</title>
     <style>
         body { font-family: sans-serif; background: #f4f7f9; margin: 0; padding: 10px; }
         .container { max-width: 500px; margin: auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
@@ -76,11 +76,11 @@
 
     <label>Forma de Pagamento</label>
     <select id="pagamento">
-        <option>DINHEIRO</option>
-        <option>PIX</option>
-        <option>DÉBITO</option>
-        <option>CRÉDITO</option>
-        <option>ENTRADA + RESTANTE</option>
+        <option value="DINHEIRO">DINHEIRO</option>
+        <option value="PIX">PIX</option>
+        <option value="CARTÃO DE CRÉDITO">CARTÃO DE CRÉDITO</option>
+        <option value="CARTÃO DE DÉBITO">CARTÃO DE DÉBITO</option>
+        <option value="ENTRADA + RESTANTE">ENTRADA + RESTANTE</option>
     </select>
 
     <div class="tabela-juros">
@@ -103,7 +103,6 @@
 
 <script>
     function enviarZap() {
-        // Coleta os dados usando os IDs corretos do seu modelo antigo
         var n = document.getElementById('nome').value.toUpperCase();
         var t = document.getElementById('telefone').value;
         var r = document.getElementById('rua').value.toUpperCase();
@@ -129,7 +128,7 @@
                     "*PAGTO:* " + p + "\n\n" +
                     "*VENDEDOR:* " + v;
 
-        // O segredo para não cortar a informação no telemóvel:
+        // O comando encodeURIComponent garante que o texto vá completo pelo link
         window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(texto);
     }
 
