@@ -3,116 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SÓ WHATSAPP</title>
+    <title>SISTEMA DE VENDAS</title>
     <style>
-        body { font-family: sans-serif; padding: 15px; background: #e5ddd5; }
-        .form-zap { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h2 { color: #075e54; text-align: center; }
-        label { display: block; margin-top: 10px; font-weight: bold; font-size: 13px; color: #128c7e; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 15px; }
+        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        h2 { text-align: center; color: #075e54; }
+        label { display: block; margin-top: 10px; font-weight: bold; font-size: 12px; }
         input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
-        
-        /* Botão Principal */
-        .btn-gerar { background: #128c7e; color: white; border: none; width: 100%; padding: 15px; margin-top: 20px; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; }
-        
-        /* Área de Confirmação que vai aparecer */
-        #confirmacao { display: none; background: #dcf8c6; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid #c1e0a8; }
-        .btn-enviar-final { background: #25d366; color: white; border: none; width: 100%; padding: 15px; margin-top: 10px; border-radius: 5px; font-size: 18px; font-weight: bold; }
+        .btn-enviar { background-color: #25d366; color: white; border: none; width: 100%; padding: 18px; margin-top: 20px; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="form-zap">
-    <h2>PEDIDO VIA WHATSAPP</h2>
+<div class="card">
+    <h2>REGISTAR PEDIDO</h2>
     
-    <label>NOME DO CLIENTE</label>
-    <input type="text" id="cli">
+    <label>CLIENTE</label>
+    <input type="text" id="campo_cliente">
     
     <label>TELEFONE</label>
-    <input type="tel" id="tel">
+    <input type="tel" id="campo_tel">
 
-    <label>ENDEREÇO (RUA E NÚMERO)</label>
-    <input type="text" id="end">
+    <label>RUA E NÚMERO</label>
+    <input type="text" id="campo_rua">
 
     <label>BAIRRO</label>
-    <input type="text" id="bai">
+    <input type="text" id="campo_bairro">
 
     <label>CIDADE</label>
-    <input type="text" id="cid">
+    <input type="text" id="campo_cidade">
 
-    <label>REFERÊNCIA</label>
-    <input type="text" id="ref">
+    <label>PONTO DE REFERÊNCIA</label>
+    <input type="text" id="campo_ref">
 
-    <label>ITENS DO PEDIDO</label>
-    <textarea id="it" rows="4" placeholder="Ex: 1 Cama Box R$ 500"></textarea>
+    <label>PRODUTOS (O QUE ELE COMPROU?)</label>
+    <textarea id="campo_itens" rows="3"></textarea>
 
-    <label>FRETE (R$)</label>
-    <input type="text" id="fr">
+    <label>VALOR TOTAL (R$)</label>
+    <input type="text" id="campo_total">
 
-    <label>TOTAL (R$)</label>
-    <input type="text" id="to">
-
-    <label>PAGAMENTO</label>
-    <input type="text" id="pag">
+    <label>FORMA DE PAGAMENTO</label>
+    <input type="text" id="campo_pagto">
 
     <label>VENDEDOR</label>
-    <input type="text" id="vend">
+    <input type="text" id="campo_vendedor">
 
-    <button class="btn-gerar" onclick="prepararMensagem()">PREPARAR MENSAGEM</button>
-
-    <div id="confirmacao">
-        <p style="font-size: 14px; color: #333; margin: 0;"><strong>Tudo pronto!</strong> Clique no botão verde abaixo para abrir o seu WhatsApp.</p>
-        <button class="btn-enviar-final" onclick="dispararWhatsApp()">CLIQUE PARA ENVIAR AGORA</button>
-    </div>
+    <button class="btn-enviar" onclick="enviarParaWhatsapp()">ENVIAR AGORA PARA WHATSAPP</button>
 </div>
 
 <script>
-    var mensagemPronta = "";
+    function enviarParaWhatsapp() {
+        // 1. Coleta os dados de forma simples para o telemóvel não travar
+        var cliente  = document.getElementById('campo_cliente').value.trim();
+        var fone     = document.getElementById('campo_tel').value.trim();
+        var rua      = document.getElementById('campo_rua').value.trim();
+        var bairro   = document.getElementById('campo_bairro').value.trim();
+        var cidade   = document.getElementById('campo_cidade').value.trim();
+        var ref      = document.getElementById('campo_ref').value.trim();
+        var itens    = document.getElementById('campo_itens').value.trim();
+        var total    = document.getElementById('campo_total').value.trim();
+        var pagto    = document.getElementById('campo_pagto').value.trim();
+        var vendedor = document.getElementById('campo_vendedor').value.trim();
 
-    function prepararMensagem() {
-        // Pega os dados um por um
-        var c = document.getElementById('cli').value.toUpperCase();
-        var t = document.getElementById('tel').value;
-        var e = document.getElementById('end').value.toUpperCase();
-        var b = document.getElementById('bai').value.toUpperCase();
-        var cid = document.getElementById('cid').value.toUpperCase();
-        var r = document.getElementById('ref').value.toUpperCase();
-        var it = document.getElementById('it').value.toUpperCase();
-        var fr = document.getElementById('fr').value;
-        var to = document.getElementById('to').value;
-        var p = document.getElementById('pag').value.toUpperCase();
-        var v = document.getElementById('vend').value.toUpperCase();
+        // 2. Monta a mensagem peça por peça
+        var textoFinal = "*PEDIDO JÁ - NOVO REGISTO*\n\n";
+        textoFinal += "*CLIENTE:* " + cliente + "\n";
+        textoFinal += "*FONE:* " + fone + "\n";
+        textoFinal += "*ENDEREÇO:* " + rua + "\n";
+        textoFinal += "*BAIRRO:* " + bairro + "\n";
+        textoFinal += "*CIDADE:* " + cidade + "\n";
+        textoFinal += "*REF:* " + ref + "\n\n";
+        textoFinal += "*ITENS:* " + itens + "\n\n";
+        textoFinal += "*TOTAL:* R$ " + total + "\n";
+        textoFinal += "*PAGAMENTO:* " + pagto + "\n";
+        textoFinal += "*VENDEDOR:* " + vendedor;
 
-        // Monta o texto
-        mensagemPronta = "*NOVO PEDIDO*\n\n" +
-                         "*CLIENTE:* " + c + "\n" +
-                         "*TEL:* " + t + "\n" +
-                         "*ENDEREÇO:* " + e + "\n" +
-                         "*BAIRRO:* " + b + "\n" +
-                         "*CIDADE:* " + cid + "\n" +
-                         "*REF:* " + r + "\n\n" +
-                         "*ITENS:* \n" + it + "\n\n" +
-                         "*FRETE:* R$ " + fr + "\n" +
-                         "*TOTAL:* R$ " + to + "\n" +
-                         "*PAGAMENTO:* " + p + "\n\n" +
-                         "*VENDEDOR:* " + v;
+        // 3. O SEGREDO PARA FUNCIONAR NO TELEMÓVEL:
+        // Usamos um link que força a abertura da aplicação diretamente
+        var mensagemCodificada = encodeURIComponent(textoFinal);
+        var linkWhatsapp = "https://api.whatsapp.com/send?text=" + mensagemCodificada;
 
-        // Mostra o botão de envio final
-        document.getElementById('confirmacao').style.display = 'block';
-        // Faz a página rolar até o botão verde
-        window.scrollTo(0, document.body.scrollHeight);
-    }
-
-    function dispararWhatsApp() {
-        if (mensagemPronta === "") {
-            alert("Preencha os dados primeiro!");
-            return;
-        }
-        
-        // Usa o método universal para celular (wa.me)
-        var url = "https://wa.me/?text=" + encodeURIComponent(mensagemPronta);
-        
-        // Força a abertura na mesma janela (evita bloqueio de pop-up no celular)
-        window.location.href = url;
+        // Tenta abrir o WhatsApp
+        window.location.href = linkWhatsapp;
     }
 </script>
 
