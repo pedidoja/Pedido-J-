@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pedido Já - Mobile</title>
+    <title>Pedido Já - Final</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; margin: 0; padding: 10px; }
+        body { font-family: sans-serif; background: #f0f2f5; margin: 0; padding: 10px; }
         .container { max-width: 100%; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .header { text-align: center; color: #1a73e8; font-size: 22px; font-weight: bold; padding-bottom: 15px; border-bottom: 2px solid #1a73e8; margin-bottom: 15px; }
-        .campo { margin-bottom: 12px; }
-        label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 4px; }
-        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #bdc3c7; border-radius: 8px; font-size: 16px; box-sizing: border-box; background: #fff; }
+        .header { text-align: center; color: #1a73e8; font-size: 22px; font-weight: bold; border-bottom: 2px solid #1a73e8; margin-bottom: 15px; padding-bottom: 10px; }
+        .campo { margin-bottom: 10px; }
+        label { display: block; font-size: 11px; font-weight: bold; color: #555; margin-bottom: 3px; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-transform: uppercase; }
         
-        .btn { width: 100%; height: 55px; border: none; border-radius: 10px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        .btn { width: 100%; height: 55px; border: none; border-radius: 10px; color: #fff; font-weight: bold; font-size: 16px; margin-top: 10px; text-transform: uppercase; }
         .btn-pdf { background: #1a73e8; }
         .btn-zap { background: #25d366; }
 
-        #print-area { display: none; }
+        #area-impressao { display: none; }
 
         @media print {
             @page { size: portrait; margin: 5mm; }
             body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
-            .via { border: 2px solid #000; padding: 15px; margin-bottom: 20px; page-break-after: always; font-size: 14px; }
-            .linha { border-bottom: 1px solid #000; margin: 8px 0; }
+            #area-impressao, #area-impressao * { visibility: visible; }
+            #area-impressao { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
+            .via { border: 2px solid #000; padding: 15px; margin-bottom: 20px; font-size: 14px; line-height: 1.4; }
+            .linha { border-bottom: 1px solid #000; margin: 5px 0; }
         }
     </style>
 </head>
@@ -34,126 +34,129 @@
     <div class="header">PEDIDO JÁ</div>
     
     <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 1;"><label>Data</label><input type="date" id="f-data"></div>
-        <div class="campo" style="flex: 1;"><label>Entrega</label><input type="date" id="f-entrega"></div>
+        <div class="campo" style="flex: 1;"><label>Data</label><input type="date" id="i-data"></div>
+        <div class="campo" style="flex: 1;"><label>Entrega</label><input type="date" id="i-entrega"></div>
     </div>
     
-    <div class="campo"><label>Cliente</label><input type="text" id="f-cliente"></div>
-    <div class="campo"><label>WhatsApp/Tel</label><input type="tel" id="f-tel"></div>
+    <div class="campo"><label>Cliente</label><input type="text" id="i-cliente"></div>
+    <div class="campo"><label>Telefone</label><input type="tel" id="i-fone"></div>
 
     <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 3;"><label>Rua</label><input type="text" id="f-rua"></div>
-        <div class="campo" style="flex: 1;"><label>Nº</label><input type="text" id="f-num"></div>
+        <div class="campo" style="flex: 3;"><label>Rua</label><input type="text" id="i-rua"></div>
+        <div class="campo" style="flex: 1;"><label>Nº</label><input type="text" id="i-num"></div>
     </div>
     
     <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 1;"><label>Bairro</label><input type="text" id="f-bairro"></div>
-        <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="f-cidade"></div>
+        <div class="campo" style="flex: 1;"><label>Bairro</label><input type="text" id="i-bairro"></div>
+        <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="i-cidade"></div>
     </div>
     
-    <div class="campo"><label>Referência</label><input type="text" id="f-ref"></div>
+    <div class="campo"><label>Referência</label><input type="text" id="i-ref"></div>
     
-    <div id="lista-itens">
+    <div id="itens">
         <label>Itens</label>
-        <div class="item-row" style="display: flex; gap: 5px; margin-bottom: 10px;">
-            <input type="text" placeholder="ITEM" class="i-nome" style="flex: 3;">
-            <input type="number" placeholder="VALOR" class="i-val" style="flex: 1;" oninput="calcular()">
+        <div class="linha-item" style="display: flex; gap: 5px; margin-bottom: 8px;">
+            <input type="text" placeholder="ITEM" class="p-nome" style="flex: 3;">
+            <input type="number" placeholder="VALOR" class="p-val" style="flex: 1.2;" oninput="calcular()">
         </div>
     </div>
-    <button onclick="addItem()" style="width:100%; padding: 10px; border-radius: 8px; margin-bottom: 15px;">+ ITEM</button>
+    <button onclick="add()" style="width:100%; padding: 10px; border-radius: 8px; margin-bottom: 15px;">+ ADICIONAR ITEM</button>
 
-    <div style="background: #eef2f7; padding: 10px; border-radius: 10px;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-            <span>Subtotal:</span><input type="text" id="res-sub" readonly style="width: 100px; border:none; background:none; text-align:right; font-weight:bold;">
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #ddd;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Subtotal:</span><b id="txt-sub">R$ 0,00</b>
         </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-            <span>Frete:</span><input type="number" id="f-frete" oninput="calcular()" style="width: 100px; padding: 5px; border-radius: 4px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; align-items: center;">
+            <span>Frete:</span><input type="number" id="i-frete" oninput="calcular()" style="width: 100px; padding: 5px;">
         </div>
-        <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; color: #1a73e8;">
-            <span>TOTAL:</span><input type="text" id="res-total" readonly style="width: 120px; border:none; background:none; text-align:right; font-weight:bold; color: #1a73e8;">
+        <div style="display: flex; justify-content: space-between; font-size: 20px; color: #1a73e8;">
+            <b>TOTAL:</b><b id="txt-total">R$ 0,00</b>
         </div>
     </div>
 
     <div class="campo" style="margin-top:15px;">
-        <label>Pagamento</label>
-        <input type="text" id="f-pagto" placeholder="Ex: DINHEIRO, PIX, CARTÃO 2X">
+        <label>Forma de Pagamento</label>
+        <input type="text" id="i-pag" placeholder="Ex: PIX, CARTÃO 3X, DINHEIRO">
     </div>
 
     <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 1;"><label>Vendedor</label><input type="text" id="f-vend"></div>
-        <div class="campo" style="flex: 1;"><label>Supervisor</label><input type="text" id="f-super"></div>
+        <div class="campo" style="flex: 1;"><label>Vendedor</label><input type="text" id="i-vend"></div>
+        <div class="campo" style="flex: 1;"><label>Supervisor</label><input type="text" id="i-super"></div>
     </div>
 
-    <button class="btn btn-pdf" onclick="gerarPDF()">SALVAR PDF / IMPRIMIR</button>
-    <button class="btn btn-zap" onclick="enviarZap()">ENVIAR PELO WHATSAPP</button>
+    <button class="btn btn-pdf" onclick="imprimir()">GERAR PEDIDO (PDF)</button>
+    <button class="btn btn-zap" onclick="enviar()">ENVIAR PELO WHATSAPP</button>
 </div>
 
-<div id="print-area"></div>
+<div id="area-impressao"></div>
 
 <script>
-    function addItem() {
+    function add() {
         const div = document.createElement('div');
-        div.className = 'item-row';
-        div.style = "display: flex; gap: 5px; margin-bottom: 10px;";
-        div.innerHTML = `<input type="text" placeholder="ITEM" class="i-nome" style="flex: 3;"><input type="number" placeholder="VALOR" class="i-val" style="flex: 1;" oninput="calcular()">`;
-        document.getElementById('lista-itens').appendChild(div);
+        div.className = 'linha-item';
+        div.style = "display: flex; gap: 5px; margin-bottom: 8px;";
+        div.innerHTML = `<input type="text" placeholder="ITEM" class="p-nome" style="flex: 3;"><input type="number" placeholder="VALOR" class="p-val" style="flex: 1.2;" oninput="calcular()">`;
+        document.getElementById('itens').appendChild(div);
     }
 
     function calcular() {
-        let sub = 0;
-        document.querySelectorAll('.i-val').forEach(inp => sub += parseFloat(inp.value || 0));
-        let frete = parseFloat(document.getElementById('f-frete').value || 0);
-        document.getElementById('res-sub').value = "R$ " + sub.toFixed(2);
-        document.getElementById('res-total').value = "R$ " + (sub + frete).toFixed(2);
+        let s = 0;
+        document.querySelectorAll('.p-val').forEach(i => s += parseFloat(i.value || 0));
+        let f = parseFloat(document.getElementById('i-frete').value || 0);
+        document.getElementById('txt-sub').innerText = "R$ " + s.toFixed(2);
+        document.getElementById('txt-total').innerText = "R$ " + (s + f).toFixed(2);
     }
 
-    function coletarDados() {
-        const v = (id) => document.getElementById(id).value.toUpperCase() || "---";
+    function formatarDados() {
+        const val = (id) => document.getElementById(id).value.toUpperCase() || "---";
         let itensTxt = "";
         let itensHtml = "";
         
-        document.querySelectorAll('.item-row').forEach(row => {
-            let n = row.querySelector('.i-nome').value.toUpperCase();
-            let p = parseFloat(row.querySelector('.i-val').value || 0).toFixed(2);
+        document.querySelectorAll('.linha-item').forEach(l => {
+            let n = l.querySelector('.p-nome').value.toUpperCase();
+            let v = parseFloat(l.querySelector('.p-val').value || 0).toFixed(2);
             if(n) {
-                itensTxt += `- ${n}: R$ ${p}\n`;
-                itensHtml += `<div style="display:flex; justify-content:space-between;"><span>${n}</span><b>R$ ${p}</b></div>`;
+                itensTxt += `• ${n}: R$ ${v}\n`;
+                itensHtml += `<div style="display:flex; justify-content:space-between;"><span>${n}</span><b>R$ ${v}</b></div>`;
             }
         });
 
-        const freteVal = parseFloat(document.getElementById('f-frete').value || 0).toFixed(2);
+        const f_val = parseFloat(document.getElementById('i-frete').value || 0).toFixed(2);
+        const sub_val = document.getElementById('txt-sub').innerText;
+        const tot_val = document.getElementById('txt-total').innerText;
 
         return {
-            txt: `*PEDIDO JÁ*\n\n*CLIENTE:* ${v('f-cliente')}\n*TEL:* ${v('f-tel')}\n*ENDEREÇO:* ${v('f-rua')}, ${v('f-num')}\n*BAIRRO:* ${v('f-bairro')}\n*CIDADE:* ${v('f-cidade')}\n*REF:* ${v('f-ref')}\n\n*ITENS:*\n${itensTxt}\n*FRETE:* R$ ${freteVal}\n*TOTAL:* ${document.getElementById('res-total').value}\n*PAGTO:* ${v('f-pagto')}\n\n*VENDEDOR:* ${v('f-vend')}`,
-            html: `
-                <div style="text-align:center; font-weight:bold; font-size:20px; margin-bottom:10px;">PEDIDO JÁ</div>
-                <div><b>CLIENTE:</b> ${v('f-cliente')}</div>
-                <div><b>TEL:</b> ${v('f-tel')}</div>
-                <div><b>ENDEREÇO:</b> ${v('f-rua')}, Nº ${v('f-num')}</div>
-                <div><b>BAIRRO:</b> ${v('f-bairro')} | <b>CIDADE:</b> ${v('f-cidade')}</div>
-                <div><b>REF:</b> ${v('f-ref')}</div>
+            wzap: `*PEDIDO JÁ*\n\n*CLIENTE:* ${val('i-cliente')}\n*TEL:* ${val('i-fone')}\n*RUA:* ${val('i-rua')}, Nº ${val('i-num')}\n*BAIRRO:* ${val('i-bairro')}\n*CIDADE:* ${val('i-cidade')}\n*REF:* ${val('i-ref')}\n\n*ITENS:*\n${itensTxt}\n*SUBTOTAL:* ${sub_val}\n*FRETE:* R$ ${f_val}\n*TOTAL:* ${tot_val}\n*PAGTO:* ${val('i-pag')}\n\n*VENDEDOR:* ${val('i-vend')}`,
+            pdf: `
+                <div style="text-align:center; font-size:22px; font-weight:bold; border-bottom:2px solid #000; margin-bottom:10px;">PEDIDO JÁ</div>
+                <div><b>CLIENTE:</b> ${val('i-cliente')}</div>
+                <div><b>TEL:</b> ${val('i-fone')}</div>
+                <div><b>ENDEREÇO:</b> ${val('i-rua')}, Nº ${val('i-num')}</div>
+                <div><b>BAIRRO:</b> ${val('i-bairro')}</div>
+                <div><b>CIDADE:</b> ${val('i-cidade')}</div>
+                <div><b>REF:</b> ${val('i-ref')}</div>
                 <div class="linha"></div>
+                <b>ITENS DO PEDIDO:</b>
                 ${itensHtml}
                 <div class="linha"></div>
-                <div style="display:flex; justify-content:space-between;"><span>SUBTOTAL:</span><span>${document.getElementById('res-sub').value}</span></div>
-                <div style="display:flex; justify-content:space-between;"><span>FRETE:</span><span>R$ ${freteVal}</span></div>
-                <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:bold;"><span>TOTAL:</span><span>${document.getElementById('res-total').value}</span></div>
-                <div style="margin-top:10px; border:1px solid #000; padding:5px;"><b>PAGAMENTO:</b> ${v('f-pagto')}</div>
-                <div style="margin-top:20px;"><b>VENDEDOR:</b> ${v('f-vend')} / <b>SUPERVISOR:</b> ${v('f-super')}</div>`
+                <div style="display:flex; justify-content:space-between;"><span>SUBTOTAL:</span><b>${sub_val}</b></div>
+                <div style="display:flex; justify-content:space-between;"><span>FRETE:</span><b>R$ ${f_val}</b></div>
+                <div style="display:flex; justify-content:space-between; font-size:18px; border-top:1px solid #000; margin-top:5px;"><b>TOTAL:</b><b>${tot_val}</b></div>
+                <div style="margin-top:10px; border:1px solid #000; padding:5px;"><b>PAGAMENTO:</b> ${val('i-pag')}</div>
+                <div style="margin-top:15px; font-size:12px;"><b>VENDEDOR:</b> ${val('i-vend')} | <b>SUPERVISOR:</b> ${val('i-super')}</div>`
         };
     }
 
-    function gerarPDF() {
-        const dados = coletarDados();
-        const area = document.getElementById('print-area');
-        area.innerHTML = `<div class="via">${dados.html}</div><div class="via">${dados.html}</div>`;
-        setTimeout(() => { window.print(); }, 1000);
+    function imprimir() {
+        const d = formatarDados();
+        document.getElementById('area-impressao').innerHTML = `<div class="via">${d.pdf}</div><div class="via">${d.pdf}</div>`;
+        setTimeout(() => { window.print(); }, 800);
     }
 
-    function enviarZap() {
-        const dados = coletarDados();
-        const link = "https://api.whatsapp.com/send?text=" + encodeURIComponent(dados.txt);
-        window.open(link, '_blank');
+    function enviar() {
+        const d = formatarDados();
+        const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(d.wzap);
+        window.open(url, '_blank');
     }
 </script>
 </body>
