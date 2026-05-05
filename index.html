@@ -200,9 +200,13 @@
         const vEntrada = parseFloat(document.getElementById('i-v-entrada').value) || 0;
         const resumoPagamento = montarTextoPagamento(vTotal, vEntrada, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
         
+        // AJUSTE SOLICITADO: Datas uma abaixo da outra no Recibo PDF
         const viaHTML = `<div class="via">
             <div class="header-p">PEDIDO JÁ</div>
-            <div style="display:flex; justify-content:space-between"><span>DATA: ${formatarData(document.getElementById('i-data').value)}</span><span>ENTREGA: ${formatarData(document.getElementById('i-entrega').value)}</span></div>
+            <div style="display:flex; flex-direction:column; gap:2px;">
+                <div><b>DATA DO PEDIDO:</b> ${formatarData(document.getElementById('i-data').value)}</div>
+                <div><b>DATA DA ENTREGA:</b> ${formatarData(document.getElementById('i-entrega').value)}</div>
+            </div>
             <div style="margin-top:5px"><b>CLIENTE:</b> ${f('i-cliente')}</div>
             <div><b>RUA:</b> ${f('i-rua')}, ${f('i-num')}</div>
             <div><b>BAIRRO:</b> ${f('i-bairro')} - ${f('i-cidade')}</div>
@@ -243,7 +247,6 @@
         const detalhesPagamento = montarTextoPagamento(vTotal, vEntrada, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
         const pagLimpo = detalhesPagamento.replace(/<br>/g, '\n');
 
-        // AJUSTE SOLICITADO: "Data do pedido" primeiro e "Data da entrega" em baixo
         let msg = `*PEDIDO JÁ*\n\n`;
         msg += `*DATA DO PEDIDO:* ${formatarData(document.getElementById('i-data').value)}\n`;
         msg += `*DATA DA ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n`;
