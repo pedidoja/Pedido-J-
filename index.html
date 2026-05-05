@@ -3,88 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA DE VENDAS</title>
+    <title>SISTEMA VENDAS</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 15px; }
-        .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        h2 { text-align: center; color: #075e54; }
-        label { display: block; margin-top: 10px; font-weight: bold; font-size: 12px; }
-        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
-        .btn-enviar { background-color: #25d366; color: white; border: none; width: 100%; padding: 18px; margin-top: 20px; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        body { font-family: sans-serif; background: #e5ddd5; padding: 10px; margin: 0; }
+        .caixa { background: #fff; padding: 20px; border-radius: 10px; max-width: 450px; margin: auto; }
+        h2 { text-align: center; color: #075e54; margin-bottom: 20px; }
+        label { display: block; font-weight: bold; font-size: 12px; margin-top: 10px; }
+        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .btn { background: #25d366; color: white; border: none; width: 100%; padding: 18px; margin-top: 25px; border-radius: 10px; font-size: 18px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>REGISTAR PEDIDO</h2>
+<div class="caixa">
+    <h2>PEDIDO WHATSAPP</h2>
     
     <label>CLIENTE</label>
-    <input type="text" id="campo_cliente">
+    <input type="text" id="c1">
     
     <label>TELEFONE</label>
-    <input type="tel" id="campo_tel">
+    <input type="tel" id="c2">
 
-    <label>RUA E NÚMERO</label>
-    <input type="text" id="campo_rua">
+    <label>ENDEREÇO (RUA/Nº)</label>
+    <input type="text" id="c3">
 
     <label>BAIRRO</label>
-    <input type="text" id="campo_bairro">
+    <input type="text" id="c4">
 
     <label>CIDADE</label>
-    <input type="text" id="campo_cidade">
+    <input type="text" id="c5">
 
-    <label>PONTO DE REFERÊNCIA</label>
-    <input type="text" id="campo_ref">
+    <label>MERCADORIAS</label>
+    <textarea id="c6" rows="3"></textarea>
 
-    <label>PRODUTOS (O QUE ELE COMPROU?)</label>
-    <textarea id="campo_itens" rows="3"></textarea>
-
-    <label>VALOR TOTAL (R$)</label>
-    <input type="text" id="campo_total">
-
-    <label>FORMA DE PAGAMENTO</label>
-    <input type="text" id="campo_pagto">
+    <label>VALOR TOTAL</label>
+    <input type="text" id="c7">
 
     <label>VENDEDOR</label>
-    <input type="text" id="campo_vendedor">
+    <input type="text" id="c8">
 
-    <button class="btn-enviar" onclick="enviarParaWhatsapp()">ENVIAR AGORA PARA WHATSAPP</button>
+    <button class="btn" onclick="forcarEnvio()">ENVIAR AGORA</button>
 </div>
 
 <script>
-    function enviarParaWhatsapp() {
-        // 1. Coleta os dados de forma simples para o telemóvel não travar
-        var cliente  = document.getElementById('campo_cliente').value.trim();
-        var fone     = document.getElementById('campo_tel').value.trim();
-        var rua      = document.getElementById('campo_rua').value.trim();
-        var bairro   = document.getElementById('campo_bairro').value.trim();
-        var cidade   = document.getElementById('campo_cidade').value.trim();
-        var ref      = document.getElementById('campo_ref').value.trim();
-        var itens    = document.getElementById('campo_itens').value.trim();
-        var total    = document.getElementById('campo_total').value.trim();
-        var pagto    = document.getElementById('campo_pagto').value.trim();
-        var vendedor = document.getElementById('campo_vendedor').value.trim();
+    function forcarEnvio() {
+        // Captura direta sem rodeios
+        var cliente  = document.getElementById('c1').value;
+        var fone     = document.getElementById('c2').value;
+        var rua      = document.getElementById('c3').value;
+        var bairro   = document.getElementById('c4').value;
+        var cidade   = document.getElementById('c5').value;
+        var itens    = document.getElementById('c6').value;
+        var total    = document.getElementById('c7').value;
+        var vendedor = document.getElementById('c8').value;
 
-        // 2. Monta a mensagem peça por peça
-        var textoFinal = "*PEDIDO JÁ - NOVO REGISTO*\n\n";
-        textoFinal += "*CLIENTE:* " + cliente + "\n";
-        textoFinal += "*FONE:* " + fone + "\n";
-        textoFinal += "*ENDEREÇO:* " + rua + "\n";
-        textoFinal += "*BAIRRO:* " + bairro + "\n";
-        textoFinal += "*CIDADE:* " + cidade + "\n";
-        textoFinal += "*REF:* " + ref + "\n\n";
-        textoFinal += "*ITENS:* " + itens + "\n\n";
-        textoFinal += "*TOTAL:* R$ " + total + "\n";
-        textoFinal += "*PAGAMENTO:* " + pagto + "\n";
-        textoFinal += "*VENDEDOR:* " + vendedor;
+        // Montagem da mensagem usando "Template Literals" (mais estável em telemóveis novos)
+        var msg = `*PEDIDO JÁ*
+--------------------------
+*CLIENTE:* ${cliente}
+*FONE:* ${fone}
+*ENDEREÇO:* ${rua}
+*BAIRRO:* ${bairro}
+*CIDADE:* ${cidade}
+--------------------------
+*ITENS:* ${itens}
+--------------------------
+*TOTAL:* R$ ${total}
+*VENDEDOR:* ${vendedor}`;
 
-        // 3. O SEGREDO PARA FUNCIONAR NO TELEMÓVEL:
-        // Usamos um link que força a abertura da aplicação diretamente
-        var mensagemCodificada = encodeURIComponent(textoFinal);
-        var linkWhatsapp = "https://api.whatsapp.com/send?text=" + mensagemCodificada;
+        // Codificação ultra-segura
+        var textoFinal = encodeURIComponent(msg);
+        
+        // Link alternativo (wa.me é mais direto que api.whatsapp)
+        var urlFinal = "https://wa.me/?text=" + textoFinal;
 
-        // Tenta abrir o WhatsApp
-        window.location.href = linkWhatsapp;
+        // Tenta abrir o WhatsApp forçando a navegação
+        window.location.replace(urlFinal);
     }
 </script>
 
