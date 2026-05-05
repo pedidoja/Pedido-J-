@@ -201,9 +201,9 @@
             if(el.value) itens += `• ${el.value.toUpperCase()} (R$ ${val.toFixed(2)})\n`;
         });
 
-        // Pega os detalhes do cartão se estiver selecionado
         const vTotal = parseFloat(document.getElementById('i-v-total').value);
         const vEntrada = parseFloat(document.getElementById('i-v-entrada').value) || 0;
+        const vFrete = document.getElementById('i-v-frete').value || "0,00";
         const detalhesPagamento = montarTextoPagamento(vTotal, vEntrada, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
         const pagLimpo = detalhesPagamento.replace(/<br>/g, '\n');
 
@@ -212,6 +212,7 @@
         msg += `*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n`;
         msg += `*TELEFONE:* ${f('i-tel')}\n\n`;
         msg += `*ITENS:*\n${itens}\n`;
+        msg += `*FRETE:* R$ ${vFrete}\n`;
         msg += `*TOTAL DO PEDIDO:* R$ ${document.getElementById('i-v-total').value}\n`;
         msg += `*FORMA DE PAGAMENTO:* ${f('i-pagamento')}\n${pagLimpo}\n\n`;
         msg += `*VENDEDOR:* ${f('i-vend')}`;
