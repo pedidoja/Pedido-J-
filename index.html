@@ -20,15 +20,17 @@
         .btn-novo { background: #6c757d; }
         @media (min-width: 600px) { body { padding: 20px; } .area-botoes { flex-direction: row; } .btn-add { width: auto; } }
         #detalhe-pagamento { background: #fdf2f2; border: 1px solid #ffc1c1; padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none; font-size: 14px; line-height: 1.6; color: #333; font-weight: bold; text-transform: uppercase; font-family: monospace; }
+        
+        /* AJUSTES DE IMPRESSÃO - TAMANHO DE LETRA AUMENTADO */
         @media print {
             @page { size: landscape; margin: 0; }
             html, body { height: 100%; overflow: hidden; margin: 0; padding: 0; }
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; color: #000 !important; }
             #print-area { position: absolute; left: 0; top: 0; display: flex !important; width: 100vw; height: 100vh; gap: 10mm; padding: 8mm; box-sizing: border-box; align-items: stretch; }
-            .via { width: 48%; border: 1px dashed #000; padding: 15px; display: flex; flex-direction: column; font-size: 11px; height: 94vh; box-sizing: border-box; }
-            .header-p { text-align: center; font-weight: bold; font-size: 16px; border-bottom: 2px solid #000; margin-bottom: 10px; }
-            .resumo-print { font-weight: bold; margin-top: 5px; font-size: 11px; line-height: 1.4; text-transform: uppercase; font-family: monospace; }
+            .via { width: 48%; border: 1px dashed #000; padding: 15px; display: flex; flex-direction: column; font-size: 13px; height: 94vh; box-sizing: border-box; }
+            .header-p { text-align: center; font-weight: bold; font-size: 18px; border-bottom: 2px solid #000; margin-bottom: 10px; }
+            .resumo-print { font-weight: bold; margin-top: 5px; font-size: 13px; line-height: 1.4; text-transform: uppercase; font-family: monospace; }
             .assinaturas-v { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
         }
     </style>
@@ -157,7 +159,7 @@
             const val = parseFloat(document.querySelectorAll('.m-val')[i].value) || 0;
             const un = document.querySelectorAll('.m-un')[i].value || "1";
             if(el.value || val > 0) {
-                mercsHTML += `<div style="display:flex; font-size:10px; margin-bottom:2px;"><div style="flex:3">${el.value.toUpperCase()}</div><div style="flex:0.6; text-align:center">${un}</div><div style="flex:1.2; text-align:right">R$ ${val.toFixed(2)}</div></div>`;
+                mercsHTML += `<div style="display:flex; font-size:12px; margin-bottom:2px;"><div style="flex:3">${el.value.toUpperCase()}</div><div style="flex:0.6; text-align:center">${un}</div><div style="flex:1.2; text-align:right">R$ ${val.toFixed(2)}</div></div>`;
             }
         });
         const f = (id) => document.getElementById(id).value.toUpperCase();
@@ -172,7 +174,7 @@
             <div><b>BAIRRO:</b> ${f('i-bairro')} - ${f('i-cidade')}</div>
             <div><b>REF:</b> ${f('i-ref')}</div>
             <div><b>TEL:</b> ${f('i-tel')} | <b>OBS:</b> ${f('i-obs-breve')}</div>
-            <div style="margin-top:10px; border-bottom:1px solid #000; font-weight:bold; display:flex; font-size:10px">
+            <div style="margin-top:10px; border-bottom:1px solid #000; font-weight:bold; display:flex; font-size:12px">
                 <div style="flex:3">MERCADORIA</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
             </div>
             <div style="min-height:100px">${mercsHTML}</div>
@@ -181,8 +183,8 @@
                 <div style="display:flex; justify-content:space-between"><span>FRETE:</span><span>R$ ${document.getElementById('i-v-frete').value || "0.00"}</span></div>
                 <div style="display:flex; justify-content:space-between; font-weight:bold"><span>TOTAL PEDIDO:</span><span>R$ ${vTotal.toFixed(2)}</span></div>
             </div>
-            <div style="margin-top:5px; font-size:10px">${resumoPagamento.replace(/<br>/g, ' ')}</div>
-            <div style="margin-top:5px; font-size:10px"><b>OBS GERAIS:</b> ${f('i-obs')}</div>
+            <div style="margin-top:5px; font-size:12px">${resumoPagamento.replace(/<br>/g, ' ')}</div>
+            <div style="margin-top:5px; font-size:12px"><b>OBS GERAIS:</b> ${f('i-obs')}</div>
             <div class="assinaturas-v">
                 <div><b>VENDEDOR:</b> ${f('i-vend')}</div>
                 <div><b>SUPERVISOR:</b> ${f('i-super')}</div>
