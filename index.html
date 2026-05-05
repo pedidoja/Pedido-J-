@@ -3,179 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PEDIDO JÁ - SISTEMA COMPLETO</title>
+    <title>PEDIDO JÁ - MODELO ORIGINAL</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 10px; }
-        .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        .header { text-align: center; border-bottom: 3px solid #1a73e8; margin-bottom: 20px; padding-bottom: 10px; color: #1a73e8; }
+        body { font-family: sans-serif; background: #f4f7f9; margin: 0; padding: 10px; }
+        .container { max-width: 500px; margin: auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; color: #1a73e8; font-size: 20px; font-weight: bold; border-bottom: 2px solid #1a73e8; margin-bottom: 15px; padding-bottom: 10px; }
         
-        label { display: block; font-size: 12px; font-weight: bold; color: #333; margin-top: 15px; text-transform: uppercase; }
-        input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #fdfdfd; }
+        label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-top: 10px; }
+        input, textarea, select { width: 100%; padding: 12px; margin-top: 4px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; text-transform: uppercase; }
         
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        
-        .juros-box { background: #e8f0fe; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #1a73e8; }
-        .juros-title { font-weight: bold; color: #1a73e8; text-align: center; margin-bottom: 10px; }
-        table { width: 100%; font-size: 14px; border-collapse: collapse; }
-        td { padding: 5px; border-bottom: 1px solid #d1d1d1; }
-        
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 10px; color: white; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer; text-transform: uppercase; }
-        .btn-zap { background: #25d366; box-shadow: 0 4px 0 #128c7e; }
-        .btn-pdf { background: #1a73e8; box-shadow: 0 4px 0 #0d47a1; }
-        
-        #print-area { display: none; }
+        .grid { display: flex; gap: 10px; }
+        .grid > div { flex: 1; }
+
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 10px; color: #fff; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer; text-transform: uppercase; }
+        .btn-zap { background: #25d366; }
+        .btn-pdf { background: #1a73e8; }
+
+        .tabela-juros { background: #eef4ff; padding: 10px; border-radius: 8px; margin-top: 15px; border: 1px solid #1a73e8; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; }
+        td { padding: 5px; border-bottom: 1px solid #cce0ff; }
+
+        #area-impressao { display: none; }
         @media print {
             body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
-            .via-recibo { border: 2px solid #000; padding: 20px; margin-bottom: 30px; font-size: 14px; line-height: 1.6; }
+            #area-impressao, #area-impressao * { visibility: visible; }
+            #area-impressao { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
+            .recibo { border: 2px solid #000; padding: 20px; margin-bottom: 30px; font-size: 14px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1 style="margin:0;">PEDIDO JÁ</h1>
-        <small>Gerador Profissional de Pedidos</small>
-    </div>
-
+    <div class="header">PEDIDO JÁ</div>
+    
     <label>Nome do Cliente</label>
-    <input type="text" id="cli" placeholder="NOME COMPLETO">
-
+    <input type="text" id="nome">
+    
     <label>WhatsApp / Telefone</label>
-    <input type="tel" id="tel" placeholder="(00) 00000-0000">
+    <input type="tel" id="telefone">
 
-    <label>Endereço (Rua e Número)</label>
-    <input type="text" id="end">
+    <label>Rua e Número</label>
+    <input type="text" id="rua">
 
     <div class="grid">
         <div>
             <label>Bairro</label>
-            <input type="text" id="bai">
+            <input type="text" id="bairro">
         </div>
         <div>
             <label>Cidade</label>
-            <input type="text" id="cid">
+            <input type="text" id="cidade">
         </div>
     </div>
-
+    
     <label>Ponto de Referência</label>
-    <input type="text" id="ref">
-
-    <label>Itens do Pedido (Descrição e Valor Unitário)</label>
-    <textarea id="itens" rows="4" placeholder="Ex: 1 Cama Box Casal - R$ 500,00"></textarea>
+    <input type="text" id="referencia">
+    
+    <label>Mercadorias / Itens</label>
+    <textarea id="mercadorias" rows="4"></textarea>
 
     <div class="grid">
         <div>
-            <label>Valor do Frete (R$)</label>
+            <label>Valor Frete</label>
             <input type="text" id="frete" value="0,00">
         </div>
         <div>
-            <label>TOTAL GERAL (R$)</label>
-            <input type="text" id="total" style="color:red; font-weight:bold;">
+            <label>Total Geral</label>
+            <input type="text" id="total" style="font-weight:bold; color:red;">
         </div>
     </div>
 
     <label>Forma de Pagamento</label>
-    <select id="pagto">
-        <option value="DINHEIRO">DINHEIRO</option>
-        <option value="PIX">PIX</option>
-        <option value="CARTÃO DE DÉBITO">CARTÃO DE DÉBITO</option>
-        <option value="CARTÃO DE CRÉDITO">CARTÃO DE CRÉDITO</option>
-        <option value="ENTRADA + RESTANTE">ENTRADA + RESTANTE</option>
+    <select id="pagamento">
+        <option>DINHEIRO</option>
+        <option>PIX</option>
+        <option>DÉBITO</option>
+        <option>CRÉDITO</option>
+        <option>ENTRADA + RESTANTE</option>
     </select>
 
-    <div class="juros-box">
-        <div class="juros-title">TABELA DE JUROS (CARTÃO)</div>
+    <div class="tabela-juros">
+        <center><b>TABELA DE JUROS (CARTÃO)</b></center>
         <table>
-            <tr><td>1x (À vista):</td><td align="right">3,5%</td></tr>
-            <tr><td>2x a 6x:</td><td align="right">8,5%</td></tr>
-            <tr><td>7x a 12x:</td><td align="right">12,9%</td></tr>
+            <tr><td>1x (À vista)</td><td align="right">3,5%</td></tr>
+            <tr><td>2x a 6x</td><td align="right">8,5%</td></tr>
+            <tr><td>7x a 12x</td><td align="right">12,9%</td></tr>
         </table>
     </div>
 
-    <label>Vendedor / Supervisor</label>
-    <input type="text" id="vend" value="FABIO">
+    <label>Vendedor</label>
+    <input type="text" id="vendedor" value="FABIO">
 
-    <button class="btn btn-zap" onclick="enviarZap()">Enviar para WhatsApp</button>
-    <button class="btn btn-pdf" onclick="gerarRecibo()">Imprimir PDF</button>
+    <button class="btn btn-zap" onclick="enviarZap()">Enviar pelo WhatsApp</button>
+    <button class="btn btn-pdf" onclick="imprimirPDF()">Gerar Recibo PDF</button>
 </div>
 
-<div id="print-area"></div>
+<div id="area-impressao"></div>
 
 <script>
-    function coletarDados() {
-        return {
-            cliente: document.getElementById('cli').value.toUpperCase(),
-            tel: document.getElementById('tel').value,
-            end: document.getElementById('end').value.toUpperCase(),
-            bai: document.getElementById('bai').value.toUpperCase(),
-            cid: document.getElementById('cid').value.toUpperCase(),
-            ref: document.getElementById('ref').value.toUpperCase(),
-            itens: document.getElementById('itens').value.toUpperCase(),
-            frete: document.getElementById('frete').value,
-            total: document.getElementById('total').value,
-            pagto: document.getElementById('pagto').value,
-            vendedor: document.getElementById('vend').value.toUpperCase(),
-            data: new Date().toLocaleDateString('pt-BR')
-        };
-    }
-
     function enviarZap() {
-        const d = coletarDados();
-        
-        const texto = `*PEDIDO JÁ - CONFIRMAÇÃO*
-        
-*CLIENTE:* ${d.cliente}
-*FONE:* ${d.tel}
-*ENDEREÇO:* ${d.end}
-*BAIRRO:* ${d.bai}
-*CIDADE:* ${d.cid}
-*REF:* ${d.ref}
+        // Coleta os dados usando os IDs corretos do seu modelo antigo
+        var n = document.getElementById('nome').value.toUpperCase();
+        var t = document.getElementById('telefone').value;
+        var r = document.getElementById('rua').value.toUpperCase();
+        var b = document.getElementById('bairro').value.toUpperCase();
+        var c = document.getElementById('cidade').value.toUpperCase();
+        var ref = document.getElementById('referencia').value.toUpperCase();
+        var m = document.getElementById('mercadorias').value.toUpperCase();
+        var f = document.getElementById('frete').value;
+        var tot = document.getElementById('total').value;
+        var p = document.getElementById('pagamento').value;
+        var v = document.getElementById('vendedor').value.toUpperCase();
 
-*MERCADORIAS:*
-${d.itens}
+        var texto = "*PEDIDO JÁ*\n\n" +
+                    "*CLIENTE:* " + n + "\n" +
+                    "*TEL:* " + t + "\n" +
+                    "*END:* " + r + "\n" +
+                    "*BAIRRO:* " + b + "\n" +
+                    "*CIDADE:* " + c + "\n" +
+                    "*REF:* " + ref + "\n\n" +
+                    "*ITENS:* \n" + m + "\n\n" +
+                    "*FRETE:* R$ " + f + "\n" +
+                    "*TOTAL:* R$ " + tot + "\n" +
+                    "*PAGTO:* " + p + "\n\n" +
+                    "*VENDEDOR:* " + v;
 
-*FRETE:* R$ ${d.frete}
-*TOTAL:* R$ ${d.total}
-*PAGAMENTO:* ${d.pagto}
-
-*VENDEDOR:* ${d.vendedor}
-*DATA:* ${d.data}`;
-
+        // O segredo para não cortar a informação no telemóvel:
         window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(texto);
     }
 
-    function gerarRecibo() {
-        const d = coletarDados();
-        const htmlRecibo = `
-            <div class="via-recibo">
-                <h1 style="text-align:center; margin:0;">PEDIDO JÁ</h1>
-                <p style="text-align:center;">COMPROVANTE DE PEDIDO - DATA: ${d.data}</p>
+    function imprimirPDF() {
+        var n = document.getElementById('nome').value.toUpperCase();
+        var t = document.getElementById('telefone').value;
+        var r = document.getElementById('rua').value.toUpperCase();
+        var b = document.getElementById('bairro').value.toUpperCase();
+        var c = document.getElementById('cidade').value.toUpperCase();
+        var m = document.getElementById('mercadorias').value.toUpperCase();
+        var tot = document.getElementById('total').value;
+        var v = document.getElementById('vendedor').value.toUpperCase();
+
+        var conteudo = `
+            <div class="recibo">
+                <h2 style="text-align:center">PEDIDO JÁ</h2>
+                <p><b>CLIENTE:</b> ${n} | <b>TEL:</b> ${t}</p>
+                <p><b>ENDEREÇO:</b> ${r}, ${b} - ${c}</p>
                 <hr>
-                <p><b>CLIENTE:</b> ${d.cliente} <span style="float:right"><b>FONE:</b> ${d.tel}</span></p>
-                <p><b>ENDEREÇO:</b> ${d.end}, ${d.bai} - ${d.cid}</p>
-                <p><b>PONTO DE REF:</b> ${d.ref}</p>
+                <p><b>MERCADORIAS:</b><br>${m.replace(/\n/g, '<br>')}</p>
                 <hr>
-                <p><b>ITENS DO PEDIDO:</b><br>${d.itens.replace(/\n/g, '<br>')}</p>
-                <hr>
-                <p><b>FRETE:</b> R$ ${d.frete}</p>
-                <p style="font-size:20px;"><b>VALOR TOTAL: R$ ${d.total}</b></p>
-                <p><b>FORMA DE PAGAMENTO:</b> ${d.pagto}</p>
-                <p><b>VENDEDOR:</b> ${d.vendedor}</p>
-                <br>
-                <div style="border-top:1px solid #000; text-align:center; padding-top:10px; margin-top:20px;">
-                    ASSINATURA DO CLIENTE
-                </div>
+                <h3>TOTAL: R$ ${tot}</h3>
+                <p><b>VENDEDOR:</b> ${v}</p>
             </div>
         `;
 
-        // Gerar duas vias
-        document.getElementById('print-area').innerHTML = htmlRecibo + "<br><p style='text-align:center'>--------------------------- corte aqui ---------------------------</p><br>" + htmlRecibo;
+        document.getElementById('area-impressao').innerHTML = conteudo + "<br><hr style='border:1px dashed #000'><br>" + conteudo;
         window.print();
     }
 </script>
-
 </body>
 </html>
