@@ -24,19 +24,10 @@
 
         #print-area { display: none; }
 
-        /* AJUSTE FINAL ANTI-FOLHA EM BRANCO */
+        /* CONFIGURAÇÃO DE IMPRESSÃO - DUAS VIAS LADO A LADO */
         @media print {
-            @page { 
-                size: landscape; 
-                margin: 0mm; 
-            }
-            html, body { 
-                width: 100%; 
-                height: 99%; /* Reduzido levemente para não "transbordar" */
-                margin: 0 !important;
-                padding: 0 !important;
-                overflow: hidden !important;
-            }
+            @page { size: landscape; margin: 0mm; }
+            html, body { width: 100%; height: 100%; margin: 0 !important; padding: 0 !important; overflow: hidden !important; background: white !important; }
             .no-print { display: none !important; }
             #print-area { 
                 display: flex !important; 
@@ -45,20 +36,30 @@
                 align-items: flex-start !important;
                 width: 100% !important; 
                 height: 100% !important;
-                gap: 10mm; /* Espaço entre as vias */
-                padding: 5mm !important;
+                gap: 8mm; 
+                padding: 6mm !important;
                 box-sizing: border-box !important;
-                background: white !important;
             }
             .via { 
-                width: 44% !important; /* Reduzido mais um pouco para garantir que caiba no celular */
+                width: 46% !important; 
                 border: 1.5px solid #000 !important; 
-                padding: 8px; 
+                padding: 12px; 
                 box-sizing: border-box; 
                 color: #000 !important;
                 font-size: 11px;
-                page-break-inside: avoid;
+                display: flex;
+                flex-direction: column;
             }
+            /* O SEGREDO PARA O VENDEDOR/SUPERVISOR FICAREM UM ABAIXO DO OUTRO */
+            .assinatura-set { 
+                margin-top: auto; 
+                padding-top: 8px; 
+                border-top: 1px dashed #000; 
+                text-align: left; 
+                font-weight: bold;
+                font-size: 10px;
+            }
+            .assinatura-set div { margin-bottom: 3px; }
         }
     </style>
 </head>
@@ -172,8 +173,8 @@
             const valorComTaxa = valorParaCartao + (valorParaCartao * taxa);
             let txt = `<b>CARTÃO:</b> R$ ${valorComTaxa.toFixed(2)}`;
             if(tipo === 'CREDITO') txt += ` (${parcelas}X DE R$ ${(valorComTaxa/parcelas).toFixed(2)})`;
-            if(entrada > 0) txt += `<br><b>DINHEIRO:</b> R$ ${entrada.toFixed(2)}`;
-            txt += `<br><b>TOTAL: R$ ${(valorComTaxa + entrada).toFixed(2)}</b>`;
+            if(entrada > 0) txt += `<br><b>DINHEIRO (A PARTE):</b> R$ ${entrada.toFixed(2)}`;
+            txt += `<br><b>TOTAL GERAL: R$ ${(valorComTaxa + entrada).toFixed(2)}</b>`;
             document.getElementById('detalhe-pagamento').innerHTML = txt;
         }
     }
@@ -187,8 +188,8 @@
             const val = parseFloat(document.querySelectorAll('.m-val')[i].value) || 0;
             if(el.value) {
                 mercsHTML += `<div style="display:flex; border-bottom:1px solid #000; padding:2px 0;">
-                    <div style="flex:3; font-size:10px;">${el.value}</div>
-                    <div style="flex:0.6; text-align:center">${document.querySelectorAll('.m-un')[i].value}</div>
+                    <div style="flex:3; font-size:10px;">${el.value.toUpperCase()}</div>
+                    <div style="flex:0.6; text-align:center">${document.querySelectorAll('.m-un')[i].value.toUpperCase()}</div>
                     <div style="flex:1.2; text-align:right">R$ ${val.toFixed(2)}</div>
                 </div>`;
             }
@@ -205,18 +206,25 @@
                     <span>ENTREGA: ${formatarData(document.getElementById('i-entrega').value)}</span>
                 </div>
                 <div style="margin-top:5px; font-size:11px;"><b>CLIENTE:</b> ${f('i-cliente')}</div>
-                <div style="font-size:11px;"><b>ENDEREÇO:</b> ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}</div>
+                <div style="font-size:10px;"><b>ENDEREÇO:</b> ${f('i-rua')}, ${f('i-num')}</div>
+                <div style="font-size:10px;"><b>BAIRRO:</b> ${f('i-bairro')}</div>
+                <div style="font-size:10px;"><b>CIDADE:</b> ${f('i-cidade')}</div>
+                <div style="font-size:9px; color:#555; margin-bottom:4px;">REF: ${f('i-ref')}</div>
+
                 <div style="display:flex; font-weight:bold; border-bottom:1.5px solid #000; font-size:9px; background:#f0f0f0; margin-top:5px;">
                     <div style="flex:3">ITEM</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
                 </div>
-                <div style="min-height:50px;">${mercsHTML}</div>
+                <div style="min-height:80px;">${mercsHTML}</div>
+                
                 <div style="border-top:1.5px solid #000; margin-top:5px; font-size:10px;">
                     <div style="display:flex; justify-content:space-between;"><span>SUBTOTAL: R$ ${document.getElementById('i-v-merc').value}</span><span>FRETE: R$ ${document.getElementById('i-v-frete').value || "0.00"}</span></div>
                     <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:13px; border-top:1px solid #000; margin-top:2px;"><span>TOTAL:</span><span>R$ ${document.getElementById('i-v-total').value}</span></div>
                 </div>
                 <div style="margin-top:5px; border:1px solid #000; padding:3px; font-size:9px;">${pagInfo}</div>
-                <div style="margin-top:10px; font-weight:bold; border-top:1px dashed #000; font-size:9px; text-align:center;">
-                    VENDEDOR: ${f('i-vend')} | SUPERVISOR: ${f('i-super')}
+                
+                <div class="assinatura-set">
+                    <div>VENDEDOR: ${f('i-vend')}</div>
+                    <div>SUPERVISOR: ${f('i-super')}</div>
                 </div>
             </div>`;
 
@@ -229,10 +237,42 @@
 
     function enviarWhatsApp() {
         const f = (id) => document.getElementById(id).value.toUpperCase();
-        let texto = `*PEDIDO JÁ*%0A`;
+        const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
+        
+        let texto = `*--- PEDIDO JÁ ---*%0A`;
+        texto += `*DATA:* ${formatarData(document.getElementById('i-data').value)}%0A`;
+        texto += `*ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}%0A%0A`;
+        
         texto += `*CLIENTE:* ${f('i-cliente')}%0A`;
-        texto += `*TOTAL:* R$ ${document.getElementById('i-v-total').value}%0A`;
-        texto += `*VENDEDOR:* ${f('i-vend')}`;
+        texto += `*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')}%0A`;
+        texto += `*BAIRRO:* ${f('i-bairro')}%0A`;
+        texto += `*CIDADE:* ${f('i-cidade')}%0A`;
+        if(f('i-ref')) texto += `*REF:* ${f('i-ref')}%0A%0A`;
+
+        texto += `*--- ITENS ---*%0A`;
+        document.querySelectorAll('.m-desc').forEach((el, i) => {
+            if(el.value) {
+                const un = document.querySelectorAll('.m-un')[i].value.toUpperCase();
+                const val = parseFloat(document.querySelectorAll('.m-val')[i].value) || 0;
+                texto += `- ${el.value.toUpperCase()} (${un}): R$ ${val.toFixed(2)}%0A`;
+            }
+        });
+
+        texto += `%0A*SUBTOTAL:* R$ ${document.getElementById('i-v-merc').value}`;
+        texto += `%0A*FRETE:* R$ ${document.getElementById('i-v-frete').value || "0.00"}`;
+        texto += `%0A*TOTAL PEDIDO:* R$ ${document.getElementById('i-v-total').value}%0A%0A`;
+
+        const pag = document.getElementById('i-pagamento').value;
+        if(pag === 'CARTÃO') {
+            const detalhe = document.getElementById('detalhe-pagamento').innerText;
+            texto += `*PAGAMENTO:*%0A${detalhe.replace(/\n/g, '%0A')}%0A`;
+        } else {
+            texto += `*FORMA DE PAGAMENTO:* ${pag}%0A`;
+        }
+
+        texto += `%0A*VENDEDOR:* ${f('i-vend')}`;
+        texto += `%0A*SUPERVISOR:* ${f('i-super')}`;
+
         window.open(`https://api.whatsapp.com/send?text=${texto}`, '_blank');
     }
 </script>
