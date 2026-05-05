@@ -3,168 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pedido Já - Mobile Final</title>
+    <title>PEDIDO JÁ V10</title>
     <style>
-        /* Design otimizado para toque no celular */
-        body { font-family: sans-serif; background: #f4f7f9; margin: 0; padding: 10px; }
-        .app-container { max-width: 100%; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .header { text-align: center; color: #1a73e8; font-size: 20px; font-weight: bold; border-bottom: 2px solid #1a73e8; margin-bottom: 15px; padding-bottom: 10px; }
-        .campo { margin-bottom: 12px; }
-        label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 4px; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-transform: uppercase; background: #fff; }
-        
-        .btn { width: 100%; height: 55px; border: none; border-radius: 10px; color: #fff; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; justify-content: center; }
-        .btn-pdf { background: #1a73e8; }
-        .btn-zap { background: #25d366; }
-
-        #area-print { display: none; }
-
+        body { font-family: sans-serif; padding: 10px; background: #f0f0f0; }
+        .box { background: #fff; padding: 15px; border-radius: 8px; max-width: 500px; margin: auto; }
+        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #999; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        label { font-weight: bold; font-size: 12px; color: #333; display: block; margin-top: 10px; }
+        .btn-zap { background: #25d366; color: white; font-weight: bold; width: 100%; border: none; padding: 15px; margin-top: 20px; border-radius: 5px; font-size: 16px; }
+        .btn-pdf { background: #1a73e8; color: white; font-weight: bold; width: 100%; border: none; padding: 15px; margin-top: 10px; border-radius: 5px; font-size: 16px; }
+        #print-area { display: none; }
         @media print {
-            @page { size: portrait; margin: 0; }
             body * { visibility: hidden; }
-            #area-print, #area-print * { visibility: visible; }
-            #area-print { display: block !important; position: absolute; left: 0; top: 0; width: 100%; padding: 10px; }
-            .via { border: 2px solid #000; padding: 15px; margin-bottom: 20px; font-size: 13px; line-height: 1.4; }
-            .divider { border-bottom: 1px solid #000; margin: 8px 0; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
+            .via { border: 1px solid #000; padding: 15px; margin-bottom: 20px; font-size: 14px; }
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="header">PEDIDO JÁ</div>
+<div class="box">
+    <h2 style="text-align:center; color:#1a73e8;">PEDIDO JÁ</h2>
     
-    <div style="display: flex; gap: 8px;">
-        <div class="campo" style="flex: 1;"><label>Data</label><input type="date" id="c_data"></div>
-        <div class="campo" style="flex: 1;"><label>Entrega</label><input type="date" id="c_entrega"></div>
-    </div>
+    <label>NOME DO CLIENTE</label>
+    <input type="text" id="cli">
     
-    <div class="campo"><label>Cliente</label><input type="text" id="c_cliente"></div>
-    <div class="campo"><label>WhatsApp / Telefone</label><input type="tel" id="c_fone"></div>
+    <label>TELEFONE</label>
+    <input type="tel" id="tel">
 
-    <div style="display: flex; gap: 8px;">
-        <div class="campo" style="flex: 3;"><label>Rua</label><input type="text" id="c_rua"></div>
-        <div class="campo" style="flex: 1;"><label>Nº</label><input type="text" id="c_num"></div>
-    </div>
+    <label>ENDEREÇO (RUA, Nº, BAIRRO, CIDADE)</label>
+    <textarea id="end" style="height: 80px;" placeholder="RUA TAL, 10 - CENTRO - CIDADE"></textarea>
     
-    <div style="display: flex; gap: 8px;">
-        <div class="campo" style="flex: 1;"><label>Bairro</label><input type="text" id="c_bairro"></div>
-        <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="c_cidade"></div>
-    </div>
-    
-    <div class="campo"><label>Ponto de Referência</label><input type="text" id="c_ref"></div>
-    
-    <div id="itens_lista">
-        <label>Mercadorias</label>
-        <div class="item-row" style="display: flex; gap: 5px; margin-bottom: 8px;">
-            <input type="text" placeholder="PRODUTO" class="p_nome" style="flex: 3;">
-            <input type="number" placeholder="VALOR" class="p_val" style="flex: 1.2;" oninput="recalc()">
-        </div>
-    </div>
-    <button onclick="addRow()" style="width:100%; padding: 10px; border-radius: 8px; margin-bottom: 15px; background: #eef;">+ ADICIONAR ITEM</button>
+    <label>REFERÊNCIA</label>
+    <input type="text" id="ref">
 
-    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #ddd;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-            <span>Subtotal Itens:</span><b id="v_sub">R$ 0.00</b>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; align-items: center;">
-            <span>Frete:</span><input type="number" id="c_frete" oninput="recalc()" style="width: 100px; padding: 5px; border:1px solid #aaa;">
-        </div>
-        <div style="display: flex; justify-content: space-between; font-size: 18px; color: #1a73e8; font-weight: bold; border-top: 2px solid #ccc; pt: 5px;">
-            <span>TOTAL GERAL:</span><span id="v_total">R$ 0.00</span>
-        </div>
+    <label>LISTA DE PRODUTOS E VALORES</label>
+    <textarea id="prod" style="height: 100px;" placeholder="1 CAMA - 200,00&#10;1 MESA - 100,00"></textarea>
+
+    <div style="background:#eee; padding:10px; margin-top:10px;">
+        <label>VALOR DO FRETE</label>
+        <input type="number" id="frete" value="0">
+        <label>TOTAL DO PEDIDO</label>
+        <input type="text" id="total_geral">
     </div>
 
-    <div class="campo" style="margin-top:15px;">
-        <label>Pagamento (Ex: Dinheiro + Pix)</label>
-        <input type="text" id="c_pagto" placeholder="DESCREVA O PAGAMENTO">
-    </div>
+    <label>FORMA DE PAGAMENTO</label>
+    <input type="text" id="pag">
 
-    <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 1;"><label>Vendedor</label><input type="text" id="c_vend"></div>
-        <div class="campo" style="flex: 1;"><label>Supervisor</label><input type="text" id="c_super"></div>
-    </div>
+    <label>VENDEDOR / SUPERVISOR</label>
+    <input type="text" id="vend">
 
-    <button class="btn btn-pdf" onclick="doPDF()">GERAR PDF / IMPRIMIR</button>
-    <button class="btn btn-zap" onclick="doZap()">ENVIAR PELO WHATSAPP</button>
+    <button class="btn-zap" onclick="enviarZap()">ENVIAR PELO WHATSAPP</button>
+    <button class="btn-pdf" onclick="gerarPDF()">GERAR PDF / IMPRIMIR</button>
 </div>
 
-<div id="area-print"></div>
+<div id="print-area"></div>
 
 <script>
-    // Define a data de hoje ao abrir
-    document.getElementById('c_data').value = new Date().toISOString().substring(0, 10);
+    function enviarZap() {
+        // Pega os dados EXATAMENTE como estão na tela
+        var cliente = document.getElementById('cli').value.toUpperCase();
+        var telefone = document.getElementById('tel').value;
+        var endereco = document.getElementById('end').value.toUpperCase();
+        var referencia = document.getElementById('ref').value.toUpperCase();
+        var produtos = document.getElementById('prod').value.toUpperCase();
+        var frete = document.getElementById('frete').value;
+        var total = document.getElementById('total_geral').value;
+        var pagto = document.getElementById('pag').value.toUpperCase();
+        var vendedor = document.getElementById('vend').value.toUpperCase();
 
-    function addRow() {
-        const div = document.createElement('div');
-        div.className = 'item-row';
-        div.style = "display: flex; gap: 5px; margin-bottom: 8px;";
-        div.innerHTML = `<input type="text" placeholder="PRODUTO" class="p_nome" style="flex: 3;"><input type="number" placeholder="VALOR" class="p_val" style="flex: 1.2;" oninput="recalc()">`;
-        document.getElementById('itens_lista').appendChild(div);
+        var texto = "*PEDIDO JÁ*\n\n" +
+                    "*CLIENTE:* " + cliente + "\n" +
+                    "*TEL:* " + telefone + "\n" +
+                    "*ENDEREÇO:* " + endereco + "\n" +
+                    "*REF:* " + referencia + "\n\n" +
+                    "*PRODUTOS:*\n" + produtos + "\n\n" +
+                    "*FRETE:* R$ " + frete + "\n" +
+                    "*TOTAL:* " + total + "\n" +
+                    "*PAGAMENTO:* " + pagto + "\n\n" +
+                    "*VENDEDOR:* " + vendedor;
+
+        var url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(texto);
+        window.location.href = url;
     }
 
-    function recalc() {
-        let s = 0;
-        document.querySelectorAll('.p_val').forEach(i => s += parseFloat(i.value || 0));
-        let f = parseFloat(document.getElementById('c_frete').value || 0);
-        document.getElementById('v_sub').innerText = "R$ " + s.toFixed(2);
-        document.getElementById('v_total').innerText = "R$ " + (s + f).toFixed(2);
-    }
+    function gerarPDF() {
+        var cliente = document.getElementById('cli').value.toUpperCase();
+        var endereco = document.getElementById('end').value.toUpperCase();
+        var produtos = document.getElementById('prod').value.toUpperCase();
+        var total = document.getElementById('total_geral').value;
 
-    function collect() {
-        const _ = (id) => document.getElementById(id).value.toUpperCase().trim() || "---";
-        let itensTxt = "";
-        let itensHtml = "";
-        
-        document.querySelectorAll('.item-row').forEach(row => {
-            let n = row.querySelector('.p_nome').value.toUpperCase();
-            let v = parseFloat(row.querySelector('.p_val').value || 0).toFixed(2);
-            if(n) {
-                itensTxt += `• ${n}: R$ ${v}\n`;
-                itensHtml += `<div style="display:flex; justify-content:space-between;"><span>${n}</span><b>R$ ${v}</b></div>`;
-            }
-        });
+        var conteudo = "<div class='via'>" +
+                       "<h2>PEDIDO JÁ</h2>" +
+                       "<p><b>CLIENTE:</b> " + cliente + "</p>" +
+                       "<p><b>ENDEREÇO:</b> " + endereco + "</p>" +
+                       "<hr>" +
+                       "<p><b>PRODUTOS:</b><br>" + produtos.replace(/\n/g, '<br>') + "</p>" +
+                       "<hr>" +
+                       "<h3>TOTAL: " + total + "</h3>" +
+                       "</div>";
 
-        const fr = parseFloat(document.getElementById('c_frete').value || 0).toFixed(2);
-        const sub = document.getElementById('v_sub').innerText;
-        const tot = document.getElementById('v_total').innerText;
-        const dtP = document.getElementById('c_data').value.split('-').reverse().join('/');
-        const dtE = document.getElementById('c_entrega').value.split('-').reverse().join('/');
-
-        return {
-            whatsapp: `*PEDIDO JÁ*\n\n*DATA:* ${dtP}\n*ENTREGA:* ${dtE}\n*CLIENTE:* ${_('c_cliente')}\n*TEL:* ${_('c_fone')}\n*END:* ${_('c_rua')}, ${_('c_num')}\n*BAIRRO:* ${_('c_bairro')}\n*CIDADE:* ${_('c_cidade')}\n*REF:* ${_('c_ref')}\n\n*ITENS:*\n${itensTxt}\n*SUBTOTAL:* ${sub}\n*FRETE:* R$ ${fr}\n*TOTAL:* ${tot}\n\n*PAGAMENTO:* ${_('c_pagto')}\n\n*VENDEDOR:* ${_('c_vend')}`,
-            pdf: `
-                <div style="text-align:center; font-size:22px; font-weight:bold; border-bottom:2px solid #000; margin-bottom:10px;">PEDIDO JÁ</div>
-                <div style="display:flex; justify-content:space-between; font-size:12px;"><span>DATA: ${dtP}</span><span>ENTREGA: ${dtE}</span></div>
-                <div class="divider"></div>
-                <div><b>CLIENTE:</b> ${_('c_cliente')}</div>
-                <div><b>FONE:</b> ${_('c_fone')}</div>
-                <div><b>ENDEREÇO:</b> ${_('c_rua')}, Nº ${_('c_num')}</div>
-                <div><b>BAIRRO:</b> ${_('c_bairro')} | <b>CIDADE:</b> ${_('c_cidade')}</div>
-                <div><b>REFERÊNCIA:</b> ${_('c_ref')}</div>
-                <div class="divider"></div>
-                <div style="background:#eee; font-weight:bold; padding:2px;">MERCADORIAS:</div>
-                ${itensHtml}
-                <div class="divider"></div>
-                <div style="display:flex; justify-content:space-between;"><span>SUBTOTAL:</span><b>${sub}</b></div>
-                <div style="display:flex; justify-content:space-between;"><span>FRETE:</span><b>R$ ${fr}</b></div>
-                <div style="display:flex; justify-content:space-between; font-size:18px; border-top:1px solid #000; margin-top:5px;"><b>TOTAL GERAL:</b><b>${tot}</b></div>
-                <div style="margin-top:10px; border:1px solid #000; padding:8px; background: #fafafa;"><b>PAGAMENTO:</b><br>${_('c_pagto')}</div>
-                <div style="margin-top:20px; font-size:12px; border-top:1px dashed #000; padding-top:5px; text-align:center;">VENDEDOR: ${_('c_vend')} | SUPERVISOR: ${_('c_super')}</div>`
-        };
-    }
-
-    function doPDF() {
-        const d = collect();
-        document.getElementById('area-print').innerHTML = `<div class="via">${d.pdf}</div><div class="via">${d.pdf}</div>`;
-        setTimeout(() => { window.print(); }, 1200);
-    }
-
-    function doZap() {
-        const d = collect();
-        // Método forçado para mobile: garante que o texto seja codificado integralmente
-        const link = "https://api.whatsapp.com/send?text=" + encodeURIComponent(d.whatsapp);
-        window.location.href = link;
+        document.getElementById('print-area').innerHTML = conteudo + conteudo;
+        window.print();
     }
 </script>
 </body>
