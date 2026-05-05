@@ -3,122 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pedido Já - Oficial</title>
+    <title>PEDIDO JÁ - SISTEMA COMPLETO</title>
     <style>
-        body { font-family: sans-serif; background: #f4f7f9; margin: 0; padding: 10px; }
-        .app-container { max-width: 500px; margin: auto; background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .header { text-align: center; color: #1a73e8; font-size: 20px; font-weight: bold; border-bottom: 2px solid #1a73e8; margin-bottom: 15px; padding-bottom: 10px; }
-        .campo { margin-bottom: 12px; }
-        label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 4px; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; text-transform: uppercase; background: #fff; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 10px; }
+        .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .header { text-align: center; border-bottom: 3px solid #1a73e8; margin-bottom: 20px; padding-bottom: 10px; color: #1a73e8; }
         
-        .btn { width: 100%; height: 55px; border: none; border-radius: 10px; color: #fff; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; justify-content: center; }
-        .btn-pdf { background: #1a73e8; }
-        .btn-zap { background: #25d366; }
-
-        #area-print { display: none; }
-
+        label { display: block; font-size: 12px; font-weight: bold; color: #333; margin-top: 15px; text-transform: uppercase; }
+        input, textarea, select { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #fdfdfd; }
+        
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        .juros-box { background: #e8f0fe; padding: 15px; border-radius: 10px; margin-top: 20px; border: 1px solid #1a73e8; }
+        .juros-title { font-weight: bold; color: #1a73e8; text-align: center; margin-bottom: 10px; }
+        table { width: 100%; font-size: 14px; border-collapse: collapse; }
+        td { padding: 5px; border-bottom: 1px solid #d1d1d1; }
+        
+        .btn { width: 100%; padding: 18px; border: none; border-radius: 10px; color: white; font-weight: bold; font-size: 16px; margin-top: 15px; cursor: pointer; text-transform: uppercase; }
+        .btn-zap { background: #25d366; box-shadow: 0 4px 0 #128c7e; }
+        .btn-pdf { background: #1a73e8; box-shadow: 0 4px 0 #0d47a1; }
+        
+        #print-area { display: none; }
         @media print {
             body * { visibility: hidden; }
-            #area-print, #area-print * { visibility: visible; }
-            #area-print { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
-            .via { border: 2px solid #000; padding: 15px; margin-bottom: 20px; font-size: 13px; line-height: 1.4; color: #000; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; }
+            .via-recibo { border: 2px solid #000; padding: 20px; margin-bottom: 30px; font-size: 14px; line-height: 1.6; }
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    <div class="header">PEDIDO JÁ</div>
-    
-    <div class="campo"><label>Nome do Cliente</label><input type="text" id="c_cliente"></div>
-    <div class="campo"><label>WhatsApp / Telefone</label><input type="tel" id="c_fone"></div>
-
-    <div style="display: flex; gap: 8px;">
-        <div class="campo" style="flex: 3;"><label>Rua e Nº</label><input type="text" id="c_rua"></div>
-        <div class="campo" style="flex: 2;"><label>Bairro</label><input type="text" id="c_bairro"></div>
-    </div>
-    
-    <div style="display: flex; gap: 8px;">
-        <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="c_cidade"></div>
-        <div class="campo" style="flex: 1;"><label>Referência</label><input type="text" id="c_ref"></div>
-    </div>
-    
-    <div class="campo">
-        <label>Mercadorias (Itens e Valores)</label>
-        <textarea id="c_itens" rows="4" placeholder="EX: 1 CAMA BOX - R$ 500"></textarea>
+<div class="container">
+    <div class="header">
+        <h1 style="margin:0;">PEDIDO JÁ</h1>
+        <small>Gerador Profissional de Pedidos</small>
     </div>
 
-    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border: 1px solid #ddd;">
-        <div class="campo"><label>Valor do Frete</label><input type="text" id="c_frete" value="0.00"></div>
-        <div class="campo"><label>Total Geral</label><input type="text" id="c_total" style="font-weight: bold; color: #1a73e8;"></div>
+    <label>Nome do Cliente</label>
+    <input type="text" id="cli" placeholder="NOME COMPLETO">
+
+    <label>WhatsApp / Telefone</label>
+    <input type="tel" id="tel" placeholder="(00) 00000-0000">
+
+    <label>Endereço (Rua e Número)</label>
+    <input type="text" id="end">
+
+    <div class="grid">
+        <div>
+            <label>Bairro</label>
+            <input type="text" id="bai">
+        </div>
+        <div>
+            <label>Cidade</label>
+            <input type="text" id="cid">
+        </div>
     </div>
 
-    <div class="campo" style="margin-top:10px;"><label>Pagamento</label><input type="text" id="c_pagto"></div>
-    <div class="campo"><label>Vendedor</label><input type="text" id="c_vendedor"></div>
+    <label>Ponto de Referência</label>
+    <input type="text" id="ref">
 
-    <button class="btn btn-zap" onclick="enviarZap()">Enviar pelo WhatsApp</button>
-    <button class="btn btn-pdf" onclick="gerarPDF()">Gerar Recibo PDF</button>
+    <label>Itens do Pedido (Descrição e Valor Unitário)</label>
+    <textarea id="itens" rows="4" placeholder="Ex: 1 Cama Box Casal - R$ 500,00"></textarea>
+
+    <div class="grid">
+        <div>
+            <label>Valor do Frete (R$)</label>
+            <input type="text" id="frete" value="0,00">
+        </div>
+        <div>
+            <label>TOTAL GERAL (R$)</label>
+            <input type="text" id="total" style="color:red; font-weight:bold;">
+        </div>
+    </div>
+
+    <label>Forma de Pagamento</label>
+    <select id="pagto">
+        <option value="DINHEIRO">DINHEIRO</option>
+        <option value="PIX">PIX</option>
+        <option value="CARTÃO DE DÉBITO">CARTÃO DE DÉBITO</option>
+        <option value="CARTÃO DE CRÉDITO">CARTÃO DE CRÉDITO</option>
+        <option value="ENTRADA + RESTANTE">ENTRADA + RESTANTE</option>
+    </select>
+
+    <div class="juros-box">
+        <div class="juros-title">TABELA DE JUROS (CARTÃO)</div>
+        <table>
+            <tr><td>1x (À vista):</td><td align="right">3,5%</td></tr>
+            <tr><td>2x a 6x:</td><td align="right">8,5%</td></tr>
+            <tr><td>7x a 12x:</td><td align="right">12,9%</td></tr>
+        </table>
+    </div>
+
+    <label>Vendedor / Supervisor</label>
+    <input type="text" id="vend" value="FABIO">
+
+    <button class="btn btn-zap" onclick="enviarZap()">Enviar para WhatsApp</button>
+    <button class="btn btn-pdf" onclick="gerarRecibo()">Imprimir PDF</button>
 </div>
 
-<div id="area-print"></div>
+<div id="print-area"></div>
 
 <script>
-    function enviarZap() {
-        // Coleta todos os campos exatamente como no anterior
-        const cliente = document.getElementById('c_cliente').value.toUpperCase();
-        const fone = document.getElementById('c_fone').value;
-        const rua = document.getElementById('c_rua').value.toUpperCase();
-        const bairro = document.getElementById('c_bairro').value.toUpperCase();
-        const cidade = document.getElementById('c_cidade').value.toUpperCase();
-        const ref = document.getElementById('c_ref').value.toUpperCase();
-        const itens = document.getElementById('c_itens').value.toUpperCase();
-        const frete = document.getElementById('c_frete').value;
-        const total = document.getElementById('c_total').value;
-        const pagto = document.getElementById('c_pagto').value.toUpperCase();
-        const vend = document.getElementById('c_vendedor').value.toUpperCase();
-
-        // Monta a mensagem completa
-        const msg = "*PEDIDO JÁ*\n\n" +
-                    "*CLIENTE:* " + cliente + "\n" +
-                    "*FONE:* " + fone + "\n" +
-                    "*ENDEREÇO:* " + rua + "\n" +
-                    "*BAIRRO:* " + bairro + "\n" +
-                    "*CIDADE:* " + cidade + "\n" +
-                    "*REF:* " + ref + "\n\n" +
-                    "*ITENS:* \n" + itens + "\n\n" +
-                    "*FRETE:* R$ " + frete + "\n" +
-                    "*TOTAL:* R$ " + total + "\n" +
-                    "*PAGAMENTO:* " + pagto + "\n\n" +
-                    "*VENDEDOR:* " + vend;
-
-        // O segredo para não cortar no celular: encodeURIComponent
-        window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(msg);
+    function coletarDados() {
+        return {
+            cliente: document.getElementById('cli').value.toUpperCase(),
+            tel: document.getElementById('tel').value,
+            end: document.getElementById('end').value.toUpperCase(),
+            bai: document.getElementById('bai').value.toUpperCase(),
+            cid: document.getElementById('cid').value.toUpperCase(),
+            ref: document.getElementById('ref').value.toUpperCase(),
+            itens: document.getElementById('itens').value.toUpperCase(),
+            frete: document.getElementById('frete').value,
+            total: document.getElementById('total').value,
+            pagto: document.getElementById('pagto').value,
+            vendedor: document.getElementById('vend').value.toUpperCase(),
+            data: new Date().toLocaleDateString('pt-BR')
+        };
     }
 
-    function gerarPDF() {
-        const cliente = document.getElementById('c_cliente').value.toUpperCase();
-        const fone = document.getElementById('c_fone').value;
-        const rua = document.getElementById('c_rua').value.toUpperCase();
-        const bairro = document.getElementById('c_bairro').value.toUpperCase();
-        const cidade = document.getElementById('c_cidade').value.toUpperCase();
-        const ref = document.getElementById('c_ref').value.toUpperCase();
-        const itens = document.getElementById('c_itens').value.toUpperCase();
-        const total = document.getElementById('c_total').value;
-        const pagto = document.getElementById('c_pagto').value.toUpperCase();
-        const vend = document.getElementById('c_vendedor').value.toUpperCase();
+    function enviarZap() {
+        const d = coletarDados();
+        
+        const texto = `*PEDIDO JÁ - CONFIRMAÇÃO*
+        
+*CLIENTE:* ${d.cliente}
+*FONE:* ${d.tel}
+*ENDEREÇO:* ${d.end}
+*BAIRRO:* ${d.bai}
+*CIDADE:* ${d.cid}
+*REF:* ${d.ref}
 
-        const conteudo = `
-            <div class="via">
-                <h2 style="text-align:center; margin:0;">PEDIDO JÁ</h2>
+*MERCADORIAS:*
+${d.itens}
+
+*FRETE:* R$ ${d.frete}
+*TOTAL:* R$ ${d.total}
+*PAGAMENTO:* ${d.pagto}
+
+*VENDEDOR:* ${d.vendedor}
+*DATA:* ${d.data}`;
+
+        window.location.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(texto);
+    }
+
+    function gerarRecibo() {
+        const d = coletarDados();
+        const htmlRecibo = `
+            <div class="via-recibo">
+                <h1 style="text-align:center; margin:0;">PEDIDO JÁ</h1>
+                <p style="text-align:center;">COMPROVANTE DE PEDIDO - DATA: ${d.data}</p>
                 <hr>
-                <p><b>CLIENTE:</b> ${cliente} | <b>FONE:</b> ${fone}</p>
-                <p><b>ENDEREÇO:</b> ${rua}</p>
-                <p><b>BAIRRO:</b> ${bairro} | <b>CIDADE:</b> ${cidade}</p>
-                <p><b>REF:</b> ${ref}</p>
+                <p><b>CLIENTE:</b> ${d.cliente} <span style="float:right"><b>FONE:</b> ${d.tel}</span></p>
+                <p><b>ENDEREÇO:</b> ${d.end}, ${d.bai} - ${d.cid}</p>
+                <p><b>PONTO DE REF:</b> ${d.ref}</p>
                 <hr>
-                <p><b>MERCADORIAS:</b><br>${itens.replace(/\n/g, '<br>')}</p>
+                <p><b>ITENS DO PEDIDO:</b><br>${d.itens.replace(/\n/g, '<br>')}</p>
                 <hr>
-                <p style="font-size:18px;"><b>TOTAL GERAL: R$ ${total}</b></p>
-                <p><b>PAGAMENTO:</b> ${pagto}</p>
-                <p><b>VENDEDOR:</b> ${vend}</
+                <p><b>FRETE:</b> R$ ${d.frete}</p>
+                <p style="font-size:20px;"><b>VALOR TOTAL: R$ ${d.total}</b></p>
+                <p><b>FORMA DE PAGAMENTO:</b> ${d.pagto}</p>
+                <p><b>VENDEDOR:</b> ${d.vendedor}</p>
+                <br>
+                <div style="border-top:1px solid #000; text-align:center; padding-top:10px; margin-top:20px;">
+                    ASSINATURA DO CLIENTE
+                </div>
+            </div>
+        `;
+
+        // Gerar duas vias
+        document.getElementById('print-area').innerHTML = htmlRecibo + "<br><p style='text-align:center'>--------------------------- corte aqui ---------------------------</p><br>" + htmlRecibo;
+        window.print();
+    }
+</script>
+
+</body>
+</html>
