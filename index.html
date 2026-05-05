@@ -22,12 +22,12 @@
 
         @media print {
             @page { size: landscape; margin: 0mm; }
-            html, body { width: 100%; height: 100%; margin: 0 !important; padding: 0 !important; overflow: hidden !important; background: white !important; }
+            html, body { width: 100%; height: 100%; margin: 0 !important; padding: 0 !important; overflow: visible !important; background: white !important; }
             .no-print { display: none !important; }
             #print-area { display: flex !important; flex-direction: row !important; justify-content: center !important; width: 100% !important; gap: 10mm; padding: 10mm !important; box-sizing: border-box !important; }
-            .via { width: 45% !important; border: 1.5px solid #000 !important; padding: 12px; box-sizing: border-box; font-size: 11px; }
-            .assinatura-set { margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px; }
-            .assinatura-set div { margin-bottom: 2px; font-weight: bold; }
+            .via { width: 45% !important; border: 2px solid #000 !important; padding: 15px; box-sizing: border-box; font-size: 12px; color: #000 !important; }
+            .assinatura-set { margin-top: 15px; border-top: 1px dashed #000; padding-top: 8px; }
+            .assinatura-set div { margin-bottom: 4px; font-weight: bold; text-align: left; }
         }
     </style>
 </head>
@@ -42,7 +42,7 @@
     </div>
     
     <div class="campo"><label>Cliente</label><input type="text" id="i-cliente"></div>
-    <div class="campo"><label>Telefone</label><input type="tel" id="i-tel" placeholder="(00) 00000-0000"></div>
+    <div class="campo"><label>Telefone</label><input type="text" id="i-tel"></div>
 
     <div style="display: flex; gap: 10px;">
         <div class="campo" style="flex: 3;"><label>Rua</label><input type="text" id="i-rua"></div>
@@ -150,14 +150,14 @@
 
     function gerarPDF() {
         const f = (id) => document.getElementById(id).value.toUpperCase();
-        const dataPed = document.getElementById('i-data').value.split('-').reverse().join('/');
-        const dataEnt = document.getElementById('i-entrega').value.split('-').reverse().join('/');
+        const dataP = document.getElementById('i-data').value.split('-').reverse().join('/');
+        const dataE = document.getElementById('i-entrega').value.split('-').reverse().join('/');
         
         let mercsHTML = "";
         document.querySelectorAll('.m-desc').forEach((el, i) => {
             const val = parseFloat(document.querySelectorAll('.m-val')[i].value) || 0;
             if(el.value) {
-                mercsHTML += `<div style="display:flex; border-bottom:1px solid #000; padding:2px 0;">
+                mercsHTML += `<div style="display:flex; border-bottom:1px solid #000; padding:3px 0;">
                     <div style="flex:3;">${el.value.toUpperCase()}</div>
                     <div style="flex:0.6; text-align:center">${document.querySelectorAll('.m-un')[i].value.toUpperCase()}</div>
                     <div style="flex:1.2; text-align:right">R$ ${val.toFixed(2)}</div>
@@ -166,31 +166,32 @@
         });
 
         const pagInfo = document.getElementById('i-pagamento').value === 'CARTÃO' ? 
-            document.getElementById('detalhe-pagamento').innerHTML : `<b>PAGAMENTO: ${f('i-pagamento')}</b>`;
+            document.getElementById('detalhe-pagamento').innerText : `PAGAMENTO: ${f('i-pagamento')}`;
 
-        const via = `
+        const viaConteudo = `
             <div class="via">
-                <div style="text-align:center; font-size:16px; font-weight:bold; border-bottom:2px solid #000; margin-bottom:5px;">PEDIDO JÁ</div>
-                <div style="display:flex; justify-content:space-between; font-size:10px; margin-bottom:5px;">
-                    <span>DATA: ${dataPed}</span><span>ENTREGA: ${dataEnt}</span>
+                <div style="text-align:center; font-size:18px; font-weight:bold; border-bottom:2px solid #000; margin-bottom:5px;">PEDIDO JÁ</div>
+                <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:8px;">
+                    <span>EMISSÃO: ${dataP}</span><span>ENTREGA: ${dataE}</span>
                 </div>
-                <div style="font-size:11px;"><b>CLIENTE:</b> ${f('i-cliente')}</div>
-                <div style="font-size:11px;"><b>TEL:</b> ${f('i-tel')}</div>
-                <div style="font-size:11px;"><b>ENDEREÇO:</b> ${f('i-rua')}, Nº ${f('i-num')}</div>
-                <div style="font-size:11px;"><b>BAIRRO:</b> ${f('i-bairro')}</div>
-                <div style="font-size:11px;"><b>CIDADE:</b> ${f('i-cidade')}</div>
-                <div style="font-size:9px; color:#444;">REF: ${f('i-ref')}</div>
+                <div style="font-size:12px; line-height:1.4;">
+                    <b>CLIENTE:</b> ${f('i-cliente')}<br>
+                    <b>TELEFONE:</b> ${f('i-tel')}<br>
+                    <b>ENDEREÇO:</b> ${f('i-rua')}, Nº ${f('i-num')}<br>
+                    <b>BAIRRO:</b> ${f('i-bairro')} | <b>CIDADE:</b> ${f('i-cidade')}<br>
+                    <b>REF:</b> ${f('i-ref')}
+                </div>
 
-                <div style="display:flex; font-weight:bold; border-bottom:1.5px solid #000; font-size:9px; background:#eee; margin-top:8px;">
+                <div style="display:flex; font-weight:bold; border-bottom:2px solid #000; font-size:10px; background:#eee; margin-top:10px;">
                     <div style="flex:3">ITEM</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
                 </div>
-                <div style="min-height:100px;">${mercsHTML}</div>
+                <div style="min-height:120px;">${mercsHTML}</div>
                 
-                <div style="border-top:1.5px solid #000; margin-top:5px; font-size:11px;">
+                <div style="border-top:2px solid #000; margin-top:5px; font-size:12px;">
                     <div style="display:flex; justify-content:space-between;"><span>SUBTOTAL: R$ ${document.getElementById('i-v-merc').value}</span><span>FRETE: R$ ${document.getElementById('i-v-frete').value || "0.00"}</span></div>
-                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:13px; border-top:1px solid #000;"><span>TOTAL:</span><span>R$ ${document.getElementById('i-v-total').value}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:15px; border-top:1px solid #000; margin-top:2px;"><span>TOTAL:</span><span>R$ ${document.getElementById('i-v-total').value}</span></div>
                 </div>
-                <div style="margin-top:5px; border:1px solid #000; padding:4px; font-size:10px;">${pagInfo}</div>
+                <div style="margin-top:8px; border:1px solid #000; padding:5px; font-size:11px; font-weight:bold;">${pagInfo}</div>
                 
                 <div class="assinatura-set">
                     <div>VENDEDOR: ${f('i-vend')}</div>
@@ -198,41 +199,43 @@
                 </div>
             </div>`;
 
-        document.getElementById('print-area').innerHTML = via + via;
-        setTimeout(() => { window.print(); }, 400);
+        document.getElementById('print-area').innerHTML = viaConteudo + viaConteudo;
+        setTimeout(() => { window.print(); }, 500);
     }
 
     function enviarWhatsApp() {
-        const f = (id) => document.getElementById(id).value.toUpperCase();
-        const dataPed = document.getElementById('i-data').value.split('-').reverse().join('/');
+        const getV = (id) => document.getElementById(id).value.toUpperCase();
         
-        let msg = `*PEDIDO JÁ*%0A`;
-        msg += `*DATA:* ${dataPed}%0A%0A`;
-        msg += `*CLIENTE:* ${f('i-cliente')}%0A`;
-        msg += `*TEL:* ${f('i-tel')}%0A`;
-        msg += `*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')}%0A`;
-        msg += `*BAIRRO:* ${f('i-bairro')}%0A`;
-        msg += `*CIDADE:* ${f('i-cidade')}%0A`;
-        if(f('i-ref')) msg += `*REF:* ${f('i-ref')}%0A`;
+        let texto = `*PEDIDO JÁ*\n\n`;
+        texto += `*DATA:* ${document.getElementById('i-data').value.split('-').reverse().join('/')}\n`;
+        texto += `*CLIENTE:* ${getV('i-cliente')}\n`;
+        texto += `*TELEFONE:* ${getV('i-tel')}\n`;
+        texto += `*ENDEREÇO:* ${getV('i-rua')}, ${getV('i-num')}\n`;
+        texto += `*BAIRRO:* ${getV('i-bairro')}\n`;
+        texto += `*CIDADE:* ${getV('i-cidade')}\n`;
+        if(getV('i-ref')) texto += `*REF:* ${getV('i-ref')}\n`;
         
-        msg += `%0A*MERCADORIAS:*%0A`;
+        texto += `\n*MERCADORIAS:*\n`;
         document.querySelectorAll('.m-desc').forEach((el, i) => {
             if(el.value) {
                 const un = document.querySelectorAll('.m-un')[i].value.toUpperCase();
                 const v = parseFloat(document.querySelectorAll('.m-val')[i].value) || 0;
-                msg += `- ${el.value.toUpperCase()} (${un}): R$ ${v.toFixed(2)}%0A`;
+                texto += `- ${el.value.toUpperCase()} (${un}): R$ ${v.toFixed(2)}\n`;
             }
         });
 
-        msg += `%0A*TOTAL:* R$ ${document.getElementById('i-v-total').value}%0A`;
+        texto += `\n*TOTAL:* R$ ${document.getElementById('i-v-total').value}\n`;
         
         const pag = document.getElementById('i-pagamento').value;
-        msg += `*PAGAMENTO:* ${pag === 'CARTÃO' ? document.getElementById('detalhe-pagamento').innerText : pag}%0A%0A`;
+        const det = (pag === 'CARTÃO') ? document.getElementById('detalhe-pagamento').innerText : pag;
+        texto += `*PAGAMENTO:* ${det}\n\n`;
         
-        msg += `*VENDEDOR:* ${f('i-vend')}%0A`;
-        msg += `*SUPERVISOR:* ${f('i-super')}`;
+        texto += `*VENDEDOR:* ${getV('i-vend')}\n`;
+        texto += `*SUPERVISOR:* ${getV('i-super')}`;
 
-        window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
+        // O segredo está no encodeURIComponent para não perder dados
+        const link = "https://api.whatsapp.com/send?text=" + encodeURIComponent(texto);
+        window.open(link, '_blank');
     }
 </script>
 </body>
