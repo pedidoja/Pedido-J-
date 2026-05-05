@@ -86,7 +86,6 @@
         <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="i-cidade"></div>
     </div>
     <div class="campo"><label>Ponto de Referência</label><textarea id="i-ref"></textarea></div>
-    
     <div style="display: flex; gap: 10px;">
         <div class="campo" style="flex: 1;"><label>Telefone</label><input type="tel" id="i-tel"></div>
         <div class="campo" style="flex: 1.5;"><label>Obs (Breve)</label><textarea id="i-obs-breve"></textarea></div>
@@ -244,8 +243,11 @@
         const detalhesPagamento = montarTextoPagamento(vTotal, vEntrada, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
         const pagLimpo = detalhesPagamento.replace(/<br>/g, '\n');
 
+        // AJUSTE SOLICITADO: "Data do pedido" primeiro e "Data da entrega" em baixo
         let msg = `*PEDIDO JÁ*\n\n`;
-        msg += `*CLIENTE:* ${f('i-cliente')}\n*ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n`;
+        msg += `*DATA DO PEDIDO:* ${formatarData(document.getElementById('i-data').value)}\n`;
+        msg += `*DATA DA ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n`;
+        msg += `*CLIENTE:* ${f('i-cliente')}\n`;
         msg += `*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n`;
         msg += `*REF:* ${f('i-ref')}\n`;
         msg += `*TELEFONE:* ${f('i-tel')}\n*OBS:* ${f('i-obs-breve')}\n\n`;
