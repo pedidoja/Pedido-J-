@@ -52,7 +52,6 @@
         <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="i-cidade"></div>
     </div>
     <div class="campo"><label>Ponto de Referência</label><textarea id="i-ref"></textarea></div>
-    <div class="campo"><label>OBS</label><textarea id="i-obs-extra"></textarea></div>
     <div style="display: flex; gap: 10px;">
         <div class="campo" style="flex: 1;"><label>Telefone</label><input type="tel" id="i-tel"></div>
         <div class="campo" style="flex: 1.5;"><label>Obs (Breve)</label><textarea id="i-obs-breve"></textarea></div>
@@ -129,7 +128,7 @@
         let texto = `CARTÃO R$ ${valorCartaoComTaxa.toFixed(2)}`;
         if (tipo === 'Credito') texto += ` EM ${parcelas}x de R$ ${(valorCartaoComTaxa/parcelas).toFixed(2)}`;
         else texto += ` (DÉBITO)`;
-        if (entrada > 0) texto += `<br>DINHEIRO/PIX R$ ${entrada.toFixed(2)}`;
+        if (entrada > 0) texto += `<br>ENTRADA PIX/DIN R$ ${entrada.toFixed(2)}`;
         texto += `<br>TOTAL FINAL R$ ${valorFinalTotal.toFixed(2)}`;
         return texto;
     }
@@ -173,7 +172,6 @@
             <div><b>RUA:</b> ${f('i-rua')}, ${f('i-num')}</div>
             <div><b>BAIRRO:</b> ${f('i-bairro')} - ${f('i-cidade')}</div>
             <div><b>REF:</b> ${f('i-ref')}</div>
-            <div><b>OBS:</b> ${f('i-obs-extra')}</div>
             <div><b>TEL:</b> ${f('i-tel')} | <b>OBS:</b> ${f('i-obs-breve')}</div>
             <div style="margin-top:10px; border-bottom:1px solid #000; font-weight:bold; display:flex; font-size:12px">
                 <div style="flex:3">MERCADORIA</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
@@ -213,8 +211,6 @@
         let msg = `*PEDIDO JÁ*\n\n`;
         msg += `*CLIENTE:* ${f('i-cliente')}\n*ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n`;
         msg += `*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n`;
-        msg += `*REF:* ${f('i-ref')}\n`;
-        msg += `*OBS:* ${f('i-obs-extra')}\n`;
         msg += `*TELEFONE:* ${f('i-tel')}\n\n`;
         msg += `*ITENS:*\n${itens}\n`;
         msg += `*FRETE:* R$ ${vFrete}\n`;
