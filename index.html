@@ -3,82 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SISTEMA VENDAS</title>
+    <title>PEDIDO JÁ - SISTEMA SEGURO</title>
     <style>
-        body { font-family: sans-serif; background: #e5ddd5; padding: 10px; margin: 0; }
-        .caixa { background: #fff; padding: 20px; border-radius: 10px; max-width: 450px; margin: auto; }
-        h2 { text-align: center; color: #075e54; margin-bottom: 20px; }
-        label { display: block; font-weight: bold; font-size: 12px; margin-top: 10px; }
-        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        .btn { background: #25d366; color: white; border: none; width: 100%; padding: 18px; margin-top: 25px; border-radius: 10px; font-size: 18px; font-weight: bold; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 15px; margin: 0; }
+        .caixa { background: #fff; padding: 20px; border-radius: 12px; max-width: 450px; margin: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #128c7e; margin-bottom: 20px; }
+        label { display: block; font-weight: bold; font-size: 13px; margin-top: 12px; color: #444; }
+        input, textarea { width: 100%; padding: 14px; margin-top: 6px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; background: #fafafa; }
+        
+        .btn-copiar { background: #128c7e; color: white; border: none; width: 100%; padding: 18px; margin-top: 25px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        
+        #aviso { display: none; background: #dcf8c6; color: #075e54; padding: 15px; border-radius: 8px; text-align: center; margin-top: 15px; font-weight: bold; border: 1px solid #c1e0a8; }
     </style>
 </head>
 <body>
 
 <div class="caixa">
-    <h2>PEDIDO WHATSAPP</h2>
+    <h2>PEDIDO JÁ</h2>
     
-    <label>CLIENTE</label>
-    <input type="text" id="c1">
+    <label>NOME DO CLIENTE</label>
+    <input type="text" id="cli">
     
     <label>TELEFONE</label>
-    <input type="tel" id="c2">
+    <input type="tel" id="tel">
 
-    <label>ENDEREÇO (RUA/Nº)</label>
-    <input type="text" id="c3">
+    <label>ENDEREÇO (RUA, Nº, BAIRRO, CIDADE)</label>
+    <textarea id="end" rows="3"></textarea>
 
-    <label>BAIRRO</label>
-    <input type="text" id="c4">
+    <label>PONTO DE REFERÊNCIA</label>
+    <input type="text" id="ref">
 
-    <label>CIDADE</label>
-    <input type="text" id="c5">
+    <label>MERCADORIAS / PRODUTOS</label>
+    <textarea id="prod" rows="4"></textarea>
 
-    <label>MERCADORIAS</label>
-    <textarea id="c6" rows="3"></textarea>
-
-    <label>VALOR TOTAL</label>
-    <input type="text" id="c7">
+    <label>VALOR TOTAL (R$)</label>
+    <input type="text" id="tot">
 
     <label>VENDEDOR</label>
-    <input type="text" id="c8">
+    <input type="text" id="vend">
 
-    <button class="btn" onclick="forcarEnvio()">ENVIAR AGORA</button>
+    <button class="btn-copiar" onclick="copiarTexto()">GERAR E COPIAR TEXTO</button>
+
+    <div id="aviso">
+        ✅ TEXTO COPIADO!<br>
+        Agora vá no WhatsApp do cliente e "Cole" a mensagem.
+    </div>
 </div>
 
 <script>
-    function forcarEnvio() {
-        // Captura direta sem rodeios
-        var cliente  = document.getElementById('c1').value;
-        var fone     = document.getElementById('c2').value;
-        var rua      = document.getElementById('c3').value;
-        var bairro   = document.getElementById('c4').value;
-        var cidade   = document.getElementById('c5').value;
-        var itens    = document.getElementById('c6').value;
-        var total    = document.getElementById('c7').value;
-        var vendedor = document.getElementById('c8').value;
+    function copiarTexto() {
+        // Coleta os dados
+        var cliente = document.getElementById('cli').value.toUpperCase();
+        var fone = document.getElementById('tel').value;
+        var endereco = document.getElementById('end').value.toUpperCase();
+        var referencia = document.getElementById('ref').value.toUpperCase();
+        var produtos = document.getElementById('prod').value.toUpperCase();
+        var total = document.getElementById('tot').value;
+        var vendedor = document.getElementById('vend').value.toUpperCase();
 
-        // Montagem da mensagem usando "Template Literals" (mais estável em telemóveis novos)
-        var msg = `*PEDIDO JÁ*
---------------------------
-*CLIENTE:* ${cliente}
-*FONE:* ${fone}
-*ENDEREÇO:* ${rua}
-*BAIRRO:* ${bairro}
-*CIDADE:* ${cidade}
---------------------------
-*ITENS:* ${itens}
---------------------------
-*TOTAL:* R$ ${total}
-*VENDEDOR:* ${vendedor}`;
+        // Monta o texto completo
+        var textoFinal = "*PEDIDO JÁ*\n\n" +
+                         "*CLIENTE:* " + cliente + "\n" +
+                         "*FONE:* " + fone + "\n" +
+                         "*ENDEREÇO:* " + endereco + "\n" +
+                         "*REF:* " + referencia + "\n\n" +
+                         "*PRODUTOS:*\n" + produtos + "\n\n" +
+                         "*TOTAL:* R$ " + total + "\n" +
+                         "*VENDEDOR:* " + vendedor;
 
-        // Codificação ultra-segura
-        var textoFinal = encodeURIComponent(msg);
+        // Tenta copiar para a área de transferência do celular
+        var aux = document.createElement("textarea");
+        aux.value = textoFinal;
+        document.body.appendChild(aux);
+        aux.select();
+        aux.setSelectionRange(0, 99999); // Para celulares
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+
+        // Mostra o aviso de sucesso e abre o WhatsApp
+        document.getElementById('aviso').style.display = 'block';
         
-        // Link alternativo (wa.me é mais direto que api.whatsapp)
-        var urlFinal = "https://wa.me/?text=" + textoFinal;
-
-        // Tenta abrir o WhatsApp forçando a navegação
-        window.location.replace(urlFinal);
+        setTimeout(function(){
+            // Abre o WhatsApp apenas para você escolher o contato e colar
+            window.location.href = "whatsapp://send";
+        }, 1500);
     }
 </script>
 
