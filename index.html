@@ -11,7 +11,6 @@
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
         
-        /* AQUI: Adicionado text-transform para garantir caixa alta visual no formulário */
         input, textarea, select { 
             width: 100%; 
             padding: 10px; 
@@ -21,8 +20,8 @@
             box-sizing: border-box; 
             background: #fff; 
             height: 48px; 
-            text-transform: uppercase; /* Força letras maiúsculas visualmente */
-            color: #000; /* Garante a cor preta total conforme solicitado anteriormente */
+            text-transform: uppercase; 
+            color: #000; 
         }
         
         textarea { height: auto; min-height: 48px; resize: vertical; font-family: sans-serif; }
@@ -59,7 +58,7 @@
                 display: flex; 
                 flex-direction: column; 
                 font-size: 11px; 
-                height: 185mm; /* Ajuste para não vazar página */
+                height: 185mm; 
                 box-sizing: border-box; 
                 overflow: hidden;
             }
@@ -87,7 +86,7 @@
         <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="i-cidade"></div>
     </div>
     <div class="campo"><label>Ponto de Referência</label><textarea id="i-ref"></textarea></div>
-    <div class="campo"><label>OBS</label><textarea id="i-obs-extra"></textarea></div>
+    
     <div style="display: flex; gap: 10px;">
         <div class="campo" style="flex: 1;"><label>Telefone</label><input type="tel" id="i-tel"></div>
         <div class="campo" style="flex: 1.5;"><label>Obs (Breve)</label><textarea id="i-obs-breve"></textarea></div>
@@ -209,7 +208,6 @@
             <div><b>RUA:</b> ${f('i-rua')}, ${f('i-num')}</div>
             <div><b>BAIRRO:</b> ${f('i-bairro')} - ${f('i-cidade')}</div>
             <div><b>REF:</b> ${f('i-ref')}</div>
-            <div><b>OBS:</b> ${f('i-obs-extra')}</div>
             <div><b>TEL:</b> ${f('i-tel')} | <b>OBS:</b> ${f('i-obs-breve')}</div>
             <div style="margin-top:8px; border-bottom:1px solid #000; font-weight:bold; display:flex; font-size:11px">
                 <div style="flex:3">MERCADORIA</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
@@ -250,8 +248,7 @@
         msg += `*CLIENTE:* ${f('i-cliente')}\n*ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n`;
         msg += `*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n`;
         msg += `*REF:* ${f('i-ref')}\n`;
-        msg += `*OBS:* ${f('i-obs-extra')}\n`;
-        msg += `*TELEFONE:* ${f('i-tel')}\n\n`;
+        msg += `*TELEFONE:* ${f('i-tel')}\n*OBS:* ${f('i-obs-breve')}\n\n`;
         msg += `*ITENS:*\n${itens}\n`;
         msg += `*FRETE:* R$ ${vFrete}\n`;
         msg += `*TOTAL DO PEDIDO:* R$ ${document.getElementById('i-v-total').value}\n`;
