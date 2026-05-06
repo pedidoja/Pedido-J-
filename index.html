@@ -161,6 +161,7 @@
         if (tipo === 'Credito') texto += ` EM ${parcelas}x de R$ ${(valorCartaoComTaxa/parcelas).toFixed(2)}`;
         else texto += ` (DÉBITO)`;
         if (entrada > 0) texto += `<br>DINHEIRO/PIX R$ ${entrada.toFixed(2)}`;
+        else texto += "";
         texto += `<br>TOTAL FINAL R$ ${valorFinalTotal.toFixed(2)}`;
         return texto;
     }
@@ -240,7 +241,7 @@
         const vTotal = parseFloat(document.getElementById('i-v-total').value);
         const vEntrada = parseFloat(document.getElementById('i-v-entrada').value) || 0;
         const detalhesPagamento = montarTextoPagamento(vTotal, vEntrada, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
-        let msg = `*PEDIDO JÁ*\n\n*DATA DO PEDIDO:* ${formatarData(document.getElementById('i-data').value)}\n*DATA DA ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n*REF:* ${f('i-ref')}\n*TELEFONE:* ${f('i-tel')}\n*OBS:* ${f('i-obs-breve')}\n\n*ITENS:*\n${itens}\n*FRETE:* R$ ${document.getElementById('i-v-frete').value || "0,00"}\n*TOTAL:* R$ ${document.getElementById('i-v-total').value}\n*FORMA:* ${f('i-pagamento')}\n${detalhesPagamento.replace(/<br>/g, '\n')}\n\n*VENDEDOR:* ${f('i-vend')}`;
+        let msg = `*PEDIDO JÁ*\n\n*DATA DO PEDIDO:* ${formatarData(document.getElementById('i-data').value)}\n*DATA DA ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n*REF:* ${f('i-ref')}\n*TELEFONE:* ${f('i-tel')}\n*OBS:* ${f('i-obs-breve')}\n\n*ITENS:*\n${itens}\n*FRETE:* R$ ${document.getElementById('i-v-frete').value || "0,00"}\n*TOTAL:* R$ ${document.getElementById('i-v-total').value}\n*FORMA:* ${f('i-pagamento')}\n${detalhesPagamento.replace(/<br>/g, '\n')}\n\n*VENDEDOR:* ${f('i-vend')}\n*SUPERVISOR:* ${f('i-super')}`;
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
     }
 </script>
