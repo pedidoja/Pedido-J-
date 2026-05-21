@@ -129,7 +129,7 @@
     <div class="area-botoes">
         <button class="btn-acao btn-novo" onclick="novoPedido()">Limpar</button>
         <button class="btn-acao" style="background: #25d366;" onclick="enviarWhatsApp()">WhatsApp</button>
-        <button class="btn-acao" onclick="executarImpressao()">Imprimir</button>
+        <button class="btn-acao" onclick="executarImpressao()">PDF</button>
     </div>
 </div>
 <div id="print-area"></div>
@@ -198,7 +198,7 @@
 
     function novoPedido() { if (confirm("Limpar pedido atual?")) location.reload(); }
 
-    function ejecutarImpressao() {
+    function executarImpressao() {
         const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
         let mercsHTML = "";
         document.querySelectorAll('.m-desc').forEach((el, i) => {
