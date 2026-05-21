@@ -176,7 +176,7 @@
         if (tipo === 'Credito') texto += ` EM ${parcelas}x de R$ ${(valorCartaoComTaxa/parcelas).toFixed(2)}`;
         else texto += ` (DÉBITO)`;
         if (entrada > 0) texto += `<br>DINHEIRO/PIX R$ ${entrada.toFixed(2)}`;
-        text += `<br>TOTAL FINAL R$ ${valorFinalTotal.toFixed(2)}`;
+        texto += `<br>TOTAL FINAL R$ ${valorFinalTotal.toFixed(2)}`;
         return texto;
     }
 
