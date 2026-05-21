@@ -25,7 +25,7 @@
         textarea { height: auto; min-height: 48px; resize: vertical; font-family: sans-serif; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
-        .btn-add { background: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; margin-bottom: 15px; text-transform: uppercase; width: 100%; }
+        .btn-add { background: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; margin-bottom: 15px; text-transform: uppercase; width: 100% !important; display: block; }
         .area-botoes { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
         .btn-acao { width: 100%; height: 55px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; color: white; display: flex; align-items: center; justify-content: center; background: #28a745; }
         .btn-novo { background: #6c757d; }
@@ -83,7 +83,8 @@
             <input type="number" step="0.01" placeholder="R$ Un" style="flex: 1.5;" class="m-val" oninput="calcularTotais()" onblur="formatarMoeda(this)">
         </div>
     </div>
-    <button class="btn-add" onclick="adicionarLinha()">+ Adicionar Item</button>
+    
+    <button type="button" class="btn-add" onclick="adicionarLinha()">+ ADICIONAR ITEM</button>
     
     <div style="display: flex; gap: 5px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #ddd; flex-wrap: wrap;">
         <div class="campo" style="flex: 1; min-width: 80px;"><label>Subtotal</label><input type="number" id="i-v-merc" readonly tabindex="-1"></div>
@@ -121,21 +122,21 @@
 <div id="print-area"></div>
 
 <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(() => console.log("App Pronto"));
-    }
-
-    const taxasCredito = { "1": 3.37, "2": 4.90, "3": 6.80, "4": 7.90, "5": 9.80, "6": 11.49, "7": 12.80, "8": 14.87, "9": 15.83, "10": 16.87, "11": 18.89, "12": 20.10 };
-    const taxaDebito = 2.00;
-
     function formatarMoeda(input) { if (input.value !== "") input.value = parseFloat(input.value).toFixed(2); }
 
     function adicionarLinha() {
+        const container = document.getElementById('lista-mercadorias');
         const div = document.createElement('div');
         div.className = 'linha-mercadoria';
-        div.style.display = "flex"; div.style.gap = "5px"; div.style.marginBottom = "8px";
-        div.innerHTML = `<textarea placeholder="Item" style="flex:3;" class="m-desc"></textarea><input type="text" placeholder="Qtd" style="flex:0.8;" class="m-un" oninput="calcularTotais()"><input type="number" step="0.01" placeholder="R$ Un" style="flex:1.5;" class="m-val" oninput="calcularTotais()" onblur="formatarMoeda(this)">`;
-        document.getElementById('lista-mercadorias').appendChild(div);
+        div.style.display = "flex"; 
+        div.style.gap = "5px"; 
+        div.style.marginBottom = "8px";
+        div.innerHTML = `
+            <textarea placeholder="Item" style="flex: 3;" class="m-desc"></textarea>
+            <input type="text" placeholder="Qtd" style="flex: 0.8;" class="m-un" oninput="calcularTotais()">
+            <input type="number" step="0.01" placeholder="R$ Un" style="flex: 1.5;" class="m-val" oninput="calcularTotais()" onblur="formatarMoeda(this)">
+        `;
+        container.appendChild(div);
     }
 
     function alternarCartao() {
@@ -147,6 +148,9 @@
         document.getElementById('detalhe-pagamento').style.display = (pag === 'Cartão') ? 'block' : 'none';
         calcularTotais();
     }
+
+    const taxasCredito = { "1": 3.37, "2": 4.90, "3": 6.80, "4": 7.90, "5": 9.80, "6": 11.49, "7": 12.80, "8": 14.87, "9": 15.83, "10": 16.87, "11": 18.89, "12": 20.10 };
+    const taxaDebito = 2.00;
 
     function montarTextoPagamento(totalPedido, entrada, pag, tipo, parcelas) {
         if (pag !== 'Cartão') return "";
@@ -179,4 +183,18 @@
         const totalPedido = Math.max(0, somaMerc + frete - desc);
         const entrada = parseFloat(document.getElementById('i-v-entrada').value) || 0;
         
-        document.getElementById
+        document.getElementById('i-v-merc').value = somaMerc.toFixed(2);
+        document.getElementById('i-v-total').value = totalPedido.toFixed(2);
+        
+        const pag = document.getElementById('i-pagamento').value;
+        if (pag === 'Cartão') {
+            document.getElementById('detalhe-pagamento').innerHTML = montarTextoPagamento(totalPedido, entrada, pag, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
+        }
+    }
+
+    function novoPedido() { if (confirm("Limpar pedido atual?")) location.reload(); }
+
+    function executarImpressao() {
+        const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
+        let mercsHTML = "";
+        document.querySelectorAll('.linha-mercadoria').forEach(linha => {
