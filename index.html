@@ -44,11 +44,28 @@
             .assinaturas-v { margin-top: auto; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #000; padding-top: 8px; color: #000 !important; }
             b, strong { color: #000 !important; }
         }
+
+        /* Estilo da Tela de Bloqueio */
+        #bloqueio-assinatura {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: white; z-index: 9999; flex-direction: column; 
+            align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
 
-<div class="container no-print">
+<div id="bloqueio-assinatura">
+    <h2 style="color: #d32f2f;">PERÍODO DE TESTE EXPIRADO</h2>
+    <p style="font-size: 18px; color: #555;">Seus 7 dias de uso gratuito do <b>Pedido Já</b> chegaram ao fim.</p>
+    <p>Para liberar seu acesso e continuar emitindo pedidos, entre em contato:</p>
+    <br>
+    <a href="https://wa.me/5521998868639" style="background: #25D366; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 18px;">
+        LIBERAR ACESSO NO WHATSAPP
+    </a>
+</div>
+
+<div class="container no-print" id="app-content">
     <div class="header">PEDIDO JÁ</div>
     
     <div style="display: flex; gap: 10px;">
@@ -120,6 +137,57 @@
 </div>
 
 <div id="print-area"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBCO-wCiMGjrFwViCCzF4pdJU78lJVj4vE",
+    authDomain: "root-engine-46512-t1.firebaseapp.com",
+    projectId: "root-engine-46512-t1",
+    storageBucket: "root-engine-46512-t1.firebasestorage.app",
+    messagingSenderId: "796107955427",
+    appId: "1:796107955427:web:5a94f73e254f5c291239d6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  async function verificarAssinatura() {
+    let usuarioId = localStorage.getItem('pedidoJa_uuid');
+    if (!usuarioId) {
+      usuarioId = 'u_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('pedidoJa_uuid', usuarioId);
+    }
+
+    const docRef = doc(db, "usuarios", usuarioId);
+    try {
+      const docSnap = await getDoc(docRef);
+      let dataInicio;
+
+      if (!docSnap.exists()) {
+        dataInicio = new Date();
+        await setDoc(docRef, { primeiroAcesso: dataInicio, status: 'teste' });
+      } else {
+        const dados = docSnap.data();
+        if (dados.status === 'pago') return; // Se estiver pago, libera geral
+        dataInicio = dados.primeiroAcesso.toDate();
+      }
+
+      const hoje = new Date();
+      const diffDias = Math.floor((hoje - dataInicio) / (1000 * 60 * 60 * 24));
+
+      if (diffDias > 7) {
+        document.getElementById('app-content').style.display = 'none';
+        document.getElementById('bloqueio-assinatura').style.display = 'flex';
+      }
+    } catch (e) {
+      console.log("Erro ao verificar acesso, liberando temporariamente.");
+    }
+  }
+  verificarAssinatura();
+</script>
 
 <script>
     function formatarMoeda(input) { if (input.value !== "") input.value = parseFloat(input.value).toFixed(2); }
