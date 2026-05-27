@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+<script>
+    // Se o usuário não estiver logado, manda ele de volta pro login
+    if (sessionStorage.getItem('logado') !== 'sim') {
+        window.location.href = "login.html";
+    }
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pedido Já</title>
