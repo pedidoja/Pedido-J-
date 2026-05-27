@@ -16,6 +16,11 @@
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
         input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; text-transform: uppercase; color: #000; }
+        
+        /* Remove setas de campos numéricos */
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
         textarea { height: auto; min-height: 48px; resize: vertical; }
         .btn-add { background: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; margin-bottom: 15px; text-transform: uppercase; width: 100%; }
         .area-botoes { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
@@ -24,140 +29,4 @@
         /* LOGIN */
         #tela-login { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         .box-login { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
-        .footer-contato { text-align: center; margin-top: 20px; font-size: 11px; color: #888; text-transform: none; }
-        
-        @media print {
-            @page { size: landscape; margin: 8mm; }
-            .no-print { display: none !important; }
-            #print-area { display: flex !important; width: 100%; justify-content: space-between; }
-            .via { width: 47%; border: 1px dashed #000; padding: 10px; height: 170mm; }
-        }
-    </style>
-</head>
-<body>
-
-<div id="tela-login">
-    <div class="box-login">
-        <h2 style="color: #1a73e8; margin-bottom: 10px;">PEDIDO JÁ</h2>
-        <div id="loader">Aguarde...</div>
-        <div id="form-auth" style="display:none;">
-            <input type="email" id="log-email" placeholder="E-mail" style="text-transform:none; margin-bottom:10px;">
-            <input type="password" id="log-senha" placeholder="Senha" style="text-transform:none; margin-bottom:10px;">
-            <button onclick="window.fazerLogin()" class="btn-acao" style="background:#1a73e8;">ENTRAR</button>
-            <button onclick="window.criarConta()" style="background:none; border:none; color:#1a73e8; margin-top:15px; font-weight:bold; font-size:12px; cursor:pointer;">CRIAR CONTA (15 DIAS GRÁTIS)</button>
-        </div>
-    </div>
-</div>
-
-<div class="container no-print" id="app-principal">
-    <div class="header">PEDIDO JÁ</div>
-    
-    <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 1;"><label>Data Pedido</label><input type="date" id="i-data"></div>
-        <div class="campo" style="flex: 1;"><label>Entrega</label><input type="date" id="i-entrega"></div>
-    </div>
-
-    <div class="campo"><label>Cliente</label><input type="text" id="i-cliente"></div>
-    <div class="campo"><label>Cidade</label><input type="text" id="i-cidade"></div>
-
-    <div id="lista-mercadorias">
-        <label>Mercadorias</label>
-        <div class="linha-mercadoria" style="display: flex; gap: 5px; margin-bottom: 8px;">
-            <textarea placeholder="Item" style="flex: 3;" class="m-desc"></textarea>
-            <input type="text" placeholder="Qtd" style="flex: 0.8;" class="m-un" oninput="calcularTotais()">
-            <input type="number" step="0.01" placeholder="R$ Un" style="flex: 1.5;" class="m-val" oninput="calcularTotais()">
-        </div>
-    </div>
-    
-    <button type="button" class="btn-add" onclick="adicionarLinha()">+ ADICIONAR ITEM</button>
-    
-    <div class="campo"><label>Total</label><input type="number" id="i-v-total" readonly style="font-weight: bold; color: #1a73e8;"></div>
-
-    <div class="area-botoes">
-        <button class="btn-acao" style="background: #25d366;" onclick="enviarWhatsApp()">WhatsApp</button>
-        <button class="btn-acao" onclick="window.print()">Imprimir PDF</button>
-        <button class="btn-acao" style="background: #6c757d; height: 40px; font-size: 11px;" onclick="window.deslogar()">Sair</button>
-    </div>
-
-    <div class="footer-contato">contatodesenvolvedor</div>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyBCO-wCiMGjrFwViCCzF4pdJU78lJVj4vE",
-        authDomain: "root-engine-465612-t1.firebaseapp.com",
-        projectId: "root-engine-465612-t1",
-        storageBucket: "root-engine-465612-t1.firebasestorage.app",
-        messagingSenderId: "796107955427",
-        appId: "1:796107955427:web:5a94f73e254f5c291239d6"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    window.criarConta = async () => {
-        const e = document.getElementById('log-email').value;
-        const s = document.getElementById('log-senha').value;
-        try {
-            const res = await createUserWithEmailAndPassword(auth, e, s);
-            await setDoc(doc(db, "usuarios", res.user.uid), { email: e, inicio: new Date() });
-            alert("Conta criada!");
-        } catch (err) { alert(err.message); }
-    };
-
-    window.fazerLogin = () => {
-        const e = document.getElementById('log-email').value;
-        const s = document.getElementById('log-senha').value;
-        signInWithEmailAndPassword(auth, e, s).catch(err => alert("Erro: " + err.message));
-    };
-
-    window.deslogar = () => signOut(auth).then(() => location.reload());
-
-    onAuthStateChanged(auth, (user) => {
-        document.getElementById('loader').style.display = 'none';
-        if (user) {
-            document.getElementById('tela-login').style.display = 'none';
-            document.getElementById('app-principal').style.display = 'block';
-        } else {
-            document.getElementById('form-auth').style.display = 'block';
-        }
-    });
-</script>
-
-<script>
-    function adicionarLinha() {
-        const container = document.getElementById('lista-mercadorias');
-        const div = document.createElement('div');
-        div.className = 'linha-mercadoria';
-        div.style.display = "flex"; div.style.gap = "5px"; div.style.marginBottom = "8px";
-        div.innerHTML = `<textarea placeholder="Item" style="flex: 3;" class="m-desc"></textarea>
-                         <input type="text" placeholder="Qtd" style="flex: 0.8;" class="m-un" oninput="calcularTotais()">
-                         <input type="number" step="0.01" placeholder="R$ Un" style="flex: 1.5;" class="m-val" oninput="calcularTotais()">`;
-        container.appendChild(div);
-    }
-
-    function calcularTotais() {
-        let soma = 0;
-        document.querySelectorAll('.linha-mercadoria').forEach(l => {
-            const q = parseFloat(l.querySelector('.m-un').value) || 0;
-            const v = parseFloat(l.querySelector('.m-val').value) || 0;
-            soma += (q * v);
-        });
-        document.getElementById('i-v-total').value = soma.toFixed(2);
-    }
-
-    function enviarWhatsApp() {
-        const cliente = document.getElementById('i-cliente').value;
-        const total = document.getElementById('i-v-total').value;
-        const msg = `*PEDIDO JÁ*\nCliente: ${cliente}\nTotal: R$ ${total}`;
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
-    }
-</script>
-
-</body>
-</html>
+        .footer-contato { text-align: center;
