@@ -3,42 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pedido Já</title>
+    <title>Pedido Já - Oficial</title>
     
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
     <style>
         body { font-family: sans-serif; background: #e9ecef; margin: 0; padding: 10px; }
-        .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); box-sizing: border-box; display: none; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); box-sizing: border-box; }
         .header { text-align: center; color: #1a73e8; border-bottom: 2px solid #1a73e8; margin-bottom: 20px; padding-bottom: 10px; font-weight: bold; font-size: 22px; }
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
         input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; text-transform: uppercase; color: #000; }
+        
+        /* Remove setinhas dos números */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
+
         textarea { height: auto; min-height: 48px; resize: vertical; }
         .btn-add { background: #6c757d; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 15px; text-transform: uppercase; }
         .btn-acao { width: 100%; height: 55px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; color: white; background: #28a745; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
-        #tela-login { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .box-login { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
-        @media print { @page { size: landscape; margin: 8mm; } .no-print { display: none !important; } #print-area { display: flex !important; width: 100%; justify-content: space-between; gap: 10px; } .via { width: 48%; border: 1px dashed #000; padding: 10px; font-size: 12px; height: 170mm; box-sizing: border-box; } }
+        
+        @media print {
+            @page { size: landscape; margin: 8mm; }
+            .no-print { display: none !important; }
+            #print-area { display: flex !important; width: 100%; justify-content: space-between; gap: 10px; }
+            .via { width: 48%; border: 1px dashed #000; padding: 10px; font-size: 12px; height: 170mm; box-sizing: border-box; }
+        }
         #print-area { display: none; }
     </style>
 </head>
 <body>
-
-<div id="tela-login">
-    <div class="box-login">
-        <h2 style="color: #1a73e8;">PEDIDO JÁ</h2>
-        <div id="status">Verificando acesso...</div>
-        <div id="form-auth" style="display:none;">
-            <input type="email" id="log-email" placeholder="E-mail" style="text-transform:none; margin-bottom:10px;">
-            <input type="password" id="log-senha" placeholder="Senha" style="text-transform:none; margin-bottom:10px;">
-            <button onclick="fazerLogin()" class="btn-acao" style="background:#1a73e8;">ENTRAR</button>
-        </div>
-    </div>
-</div>
 
 <div class="container no-print" id="app-principal">
     <div class="header">PEDIDO JÁ</div>
@@ -49,12 +41,148 @@
     </div>
 
     <div class="campo"><label>Cliente</label><input type="text" id="i-cliente"></div>
-    <div class="campo"><label>Rua e Nº</label><input type="text" id="i-rua"></div>
-    <div class="campo"><label>Bairro</label><input type="text" id="i-bairro"></div>
+    
+    <div style="display: flex; gap: 10px;">
+        <div class="campo" style="flex: 3;"><label>Rua</label><input type="text" id="i-rua"></div>
+        <div class="campo" style="flex: 1;"><label>Nº</label><input type="text" id="i-num"></div>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+        <div class="campo" style="flex: 1;"><label>Bairro</label><input type="text" id="i-bairro"></div>
+        <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="i-cidade"></div>
+    </div>
+
     <div class="campo"><label>Ponto de Referência</label><input type="text" id="i-ref"></div>
 
     <div id="lista-mercadorias">
         <label>Mercadorias</label>
         <div class="linha-mercadoria" style="display: flex; gap: 5px; margin-bottom: 8px;">
             <textarea placeholder="DESCRIÇÃO" style="flex: 3;" class="m-desc"></textarea>
-            <input type="number" placeholder="QTD" style="flex: 0.8;" class="
+            <input type="number" placeholder="QTD" style="flex: 0.8;" class="m-un" oninput="calcularTudo()">
+            <input type="number" step="0.01" placeholder="VALOR" style="flex: 1.5;" class="m-val" oninput="calcularTudo()">
+        </div>
+    </div>
+    <button type="button" class="btn-add" onclick="addLinha()">+ ADICIONAR ITEM</button>
+
+    <div class="campo"><label>Forma de Pagamento</label>
+        <select id="i-pagamento" onchange="toggleCartao()">
+            <option value="DINHEIRO">DINHEIRO</option>
+            <option value="PIX">PIX</option>
+            <option value="CARTÃO DE CRÉDITO">CARTÃO DE CRÉDITO</option>
+            <option value="CARTÃO DE DÉBITO">CARTÃO DE DÉBITO</option>
+        </select>
+    </div>
+
+    <div id="div-parcelas" class="campo" style="display:none;">
+        <label>Número de Parcelas</label>
+        <select id="i-parcelas" onchange="calcularTudo()">
+            <option value="1" data-taxa="3.37">1X (3.37%)</option>
+            <option value="2" data-taxa="4.25">2X (4.25%)</option>
+            <option value="3" data-taxa="5.14">3X (5.14%)</option>
+            <option value="4" data-taxa="6.04">4X (6.04%)</option>
+            <option value="5" data-taxa="6.96">5X (6.96%)</option>
+            <option value="6" data-taxa="7.88">6X (7.88%)</option>
+            <option value="7" data-taxa="10.82">7X (10.82%)</option>
+            <option value="8" data-taxa="11.83">8X (11.83%)</option>
+            <option value="9" data-taxa="12.86">9X (12.86%)</option>
+            <option value="10" data-taxa="13.91">10X (13.91%)</option>
+            <option value="11" data-taxa="14.97">11X (14.97%)</option>
+            <option value="12" data-taxa="16.06">12X (16.06%)</option>
+        </select>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+        <div class="campo" style="flex: 1;"><label>Vendedor</label><input type="text" id="i-vendedor"></div>
+        <div class="campo" style="flex: 1;"><label>Supervisor</label><input type="text" id="i-supervisor"></div>
+    </div>
+
+    <div style="display: flex; gap: 5px;">
+        <div class="campo" style="flex: 1;"><label>Frete</label><input type="number" id="i-frete" value="0.00" oninput="calcularTudo()"></div>
+        <div class="campo" style="flex: 1;"><label>Desc.</label><input type="number" id="i-desc" value="0.00" oninput="calcularTudo()"></div>
+        <div class="campo" style="flex: 1.5;"><label>Total</label><input type="text" id="i-total" readonly style="font-weight: bold; color: #1a73e8; background: #f0f0f0;"></div>
+    </div>
+
+    <div class="campo"><label>Observações</label><textarea id="i-obs"></textarea></div>
+
+    <button class="btn-acao" onclick="enviarZap()">Enviar WhatsApp</button>
+    <button class="btn-acao" style="background:#6c757d;" onclick="imprimir()">Imprimir PDF (2 Vias)</button>
+</div>
+
+<div id="print-area"></div>
+
+<script>
+    function toggleCartao() {
+        const pag = document.getElementById('i-pagamento').value;
+        document.getElementById('div-parcelas').style.display = (pag === "CARTÃO DE CRÉDITO") ? "block" : "none";
+        calcularTudo();
+    }
+
+    function addLinha() {
+        const div = document.createElement('div');
+        div.className = 'linha-mercadoria';
+        div.style = "display: flex; gap: 5px; margin-bottom: 8px;";
+        div.innerHTML = `<textarea style="flex: 3;" class="m-desc"></textarea>
+                         <input type="number" style="flex: 0.8;" class="m-un" oninput="calcularTudo()">
+                         <input type="number" step="0.01" style="flex: 1.5;" class="m-val" oninput="calcularTudo()">`;
+        document.getElementById('lista-mercadorias').appendChild(div);
+    }
+
+    function calcularTudo() {
+        let subtotal = 0;
+        document.querySelectorAll('.linha-mercadoria').forEach(l => {
+            const q = parseFloat(l.querySelector('.m-un').value) || 0;
+            const v = parseFloat(l.querySelector('.m-val').value) || 0;
+            subtotal += (q * v);
+        });
+        
+        let valorBase = subtotal + (parseFloat(document.getElementById('i-frete').value) || 0) - (parseFloat(document.getElementById('i-desc').value) || 0);
+        
+        if(document.getElementById('i-pagamento').value === "CARTÃO DE CRÉDITO") {
+            const sel = document.getElementById('i-parcelas');
+            const taxa = parseFloat(sel.options[sel.selectedIndex].getAttribute('data-taxa'));
+            valorBase = valorBase / (1 - (taxa / 100)); // Cálculo de juros por fora para garantir o recebimento líquido
+        }
+        
+        document.getElementById('i-total').value = valorBase.toFixed(2);
+    }
+
+    function enviarZap() {
+        let itensMsg = "";
+        document.querySelectorAll('.linha-mercadoria').forEach(l => {
+            const d = l.querySelector('.m-desc').value.toUpperCase();
+            if(d) itensMsg += `- ${l.querySelector('.m-un').value}X ${d}\n`;
+        });
+
+        const pag = document.getElementById('i-pagamento').value;
+        const parcelas = (pag === "CARTÃO DE CRÉDITO") ? ` (${document.getElementById('i-parcelas').value}X)` : "";
+
+        const msg = `*PEDIDO JÁ*\n\n` +
+            `Data do pedido: ${document.getElementById('i-data').value}\n` +
+            `Data da entrega: ${document.getElementById('i-entrega').value}\n\n` +
+            `CLIENTE: ${document.getElementById('i-cliente').value.toUpperCase()}\n` +
+            `ENDEREÇO: ${document.getElementById('i-rua').value.toUpperCase()}, ${document.getElementById('i-num').value}\n` +
+            `BAIRRO: ${document.getElementById('i-bairro').value.toUpperCase()}\n` +
+            `REFERÊNCIA: ${document.getElementById('i-ref').value.toUpperCase()}\n\n` +
+            `MERCADORIAS:\n${itensMsg}\n` +
+            `FORMA DE PAGAMENTO: ${pag}${parcelas}\n` +
+            `VENDEDOR: ${document.getElementById('i-vendedor').value.toUpperCase()}\n` +
+            `SUPERVISOR: ${document.getElementById('i-supervisor').value.toUpperCase()}\n` +
+            `TOTAL: R$ ${document.getElementById('i-total').value}\n\n` +
+            `OBSERVAÇÕES: ${document.getElementById('i-obs').value.toUpperCase()}`;
+
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
+    }
+
+    function imprimir() {
+        const total = document.getElementById('i-total').value;
+        const cliente = document.getElementById('i-cliente').value.toUpperCase();
+        const h = `
+            <div class="via"><h2>VIA LOJA</h2><p>CLIENTE: ${cliente}</p><hr><p>TOTAL: R$ ${total}</p></div>
+            <div class="via"><h2>VIA CLIENTE</h2><p>CLIENTE: ${cliente}</p><hr><p>TOTAL: R$ ${total}</p></div>
+        `;
+        document.getElementById('print-area').innerHTML = h;
+        window.print();
+    }
+</script>
+</body>
+</html>
