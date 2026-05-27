@@ -15,14 +15,23 @@
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
         input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; text-transform: uppercase; color: #000; }
+        
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
+
         textarea { height: auto; min-height: 48px; resize: vertical; }
         .btn-add { background: #6c757d; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 15px; text-transform: uppercase; }
         .btn-acao { width: 100%; height: 55px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; color: white; background: #28a745; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
+        
         #tela-login { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         .box-login { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
-        @media print { @page { size: landscape; margin: 8mm; } .no-print { display: none !important; } #print-area { display: flex !important; width: 100%; justify-content: space-between; gap: 10px; } .via { width: 48%; border: 1px dashed #000; padding: 10px; font-size: 12px; height: 170mm; box-sizing: border-box; } }
+
+        @media print {
+            @page { size: landscape; margin: 8mm; }
+            .no-print { display: none !important; }
+            #print-area { display: flex !important; width: 100%; justify-content: space-between; gap: 10px; }
+            .via { width: 48%; border: 1px dashed #000; padding: 10px; font-size: 12px; height: 170mm; box-sizing: border-box; }
+        }
         #print-area { display: none; }
     </style>
 </head>
@@ -35,150 +44,4 @@
         <div id="form-auth" style="display:none;">
             <input type="email" id="log-email" placeholder="E-mail" style="text-transform:none; margin-bottom:10px;">
             <input type="password" id="log-senha" placeholder="Senha" style="text-transform:none; margin-bottom:10px;">
-            <button onclick="fazerLogin()" class="btn-acao" style="background:#1a73e8;">ENTRAR</button>
-        </div>
-    </div>
-</div>
-
-<div class="container no-print" id="app-principal">
-    <div class="header">PEDIDO JÁ</div>
-    
-    <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 1;"><label>Data do pedido</label><input type="date" id="i-data"></div>
-        <div class="campo" style="flex: 1;"><label>Data da entrega</label><input type="date" id="i-entrega"></div>
-    </div>
-
-    <div class="campo"><label>Vendedor</label><input type="text" id="i-vendedor"></div>
-    <div class="campo"><label>Supervisor</label><input type="text" id="i-supervisor"></div>
-    <div class="campo"><label>Cliente</label><input type="text" id="i-cliente"></div>
-    
-    <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 3;"><label>Rua</label><input type="text" id="i-rua"></div>
-        <div class="campo" style="flex: 1;"><label>Nº</label><input type="text" id="i-num"></div>
-    </div>
-
-    <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 1;"><label>Bairro</label><input type="text" id="i-bairro"></div>
-        <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="i-cidade"></div>
-    </div>
-
-    <div class="campo"><label>Ponto de Referência</label><input type="text" id="i-ref"></div>
-
-    <div id="lista-mercadorias">
-        <label>Mercadorias</label>
-        <div class="linha-mercadoria" style="display: flex; gap: 5px; margin-bottom: 8px;">
-            <textarea placeholder="ITEM" style="flex: 3;" class="m-desc"></textarea>
-            <input type="number" placeholder="QTD" style="flex: 0.8;" class="m-un" oninput="calcular()">
-            <input type="number" step="0.01" placeholder="UNIT" style="flex: 1.5;" class="m-val" oninput="calcular()">
-        </div>
-    </div>
-    <button class="btn-add" onclick="addLinha()">+ ADICIONAR ITEM</button>
-
-    <div class="campo"><label>Forma de Pagamento</label>
-        <select id="i-pagamento">
-            <option value="DINHEIRO">DINHEIRO</option>
-            <option value="PIX">PIX</option>
-            <option value="CARTÃO DE CRÉDITO">CARTÃO DE CRÉDITO</option>
-            <option value="CARTÃO DE DÉBITO">CARTÃO DE DÉBITO</option>
-        </select>
-    </div>
-
-    <div style="display: flex; gap: 5px;">
-        <div class="campo" style="flex: 1;"><label>Frete</label><input type="number" id="i-frete" oninput="calcular()"></div>
-        <div class="campo" style="flex: 1;"><label>Desc.</label><input type="number" id="i-desc" oninput="calcular()"></div>
-        <div class="campo" style="flex: 1.5;"><label>Total</label><input type="number" id="i-total" readonly style="font-weight: bold; color: #1a73e8;"></div>
-    </div>
-
-    <div class="campo"><label>Observações</label><textarea id="i-obs"></textarea></div>
-
-    <button class="btn-acao" onclick="enviarZap()">Enviar WhatsApp</button>
-    <button class="btn-acao" style="background:#6c757d;" onclick="imprimir()">Imprimir PDF</button>
-    <button class="btn-acao" style="background:#dc3545; height: 35px; font-size: 11px; margin-top: 20px;" onclick="sair()">Sair</button>
-</div>
-
-<div id="print-area"></div>
-
-<script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyBCO-wCiMGjrFwViCCzF4pdJU78lJVj4vE",
-        authDomain: "root-engine-465612-t1.firebaseapp.com",
-        projectId: "root-engine-465612-t1",
-        storageBucket: "root-engine-465612-t1.firebasestorage.app",
-        messagingSenderId: "796107955427",
-        appId: "1:796107955427:web:5a94f73e254f5c291239d6"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    function fazerLogin() {
-        const e = document.getElementById('log-email').value;
-        const s = document.getElementById('log-senha').value;
-        auth.signInWithEmailAndPassword(e, s).catch(err => alert("Erro: " + err.message));
-    }
-
-    function sair() { auth.signOut().then(() => location.reload()); }
-
-    auth.onAuthStateChanged((user) => {
-        document.getElementById('status').style.display = 'none';
-        if (user) {
-            document.getElementById('tela-login').style.display = 'none';
-            document.getElementById('app-principal').style.display = 'block';
-        } else {
-            document.getElementById('form-auth').style.display = 'block';
-        }
-    });
-
-    function addLinha() {
-        const div = document.createElement('div');
-        div.className = 'linha-mercadoria';
-        div.style = "display: flex; gap: 5px; margin-bottom: 8px;";
-        div.innerHTML = `<textarea style="flex: 3;" class="m-desc"></textarea>
-                         <input type="number" style="flex: 0.8;" class="m-un" oninput="calcular()">
-                         <input type="number" step="0.01" style="flex: 1.5;" class="m-val" oninput="calcular()">`;
-        document.getElementById('lista-mercadorias').appendChild(div);
-    }
-
-    function calcular() {
-        let s = 0;
-        document.querySelectorAll('.linha-mercadoria').forEach(l => {
-            s += (parseFloat(l.querySelector('.m-un').value) || 0) * (parseFloat(l.querySelector('.m-val').value) || 0);
-        });
-        const f = parseFloat(document.getElementById('i-frete').value) || 0;
-        const d = parseFloat(document.getElementById('i-desc').value) || 0;
-        document.getElementById('i-total').value = (s + f - d).toFixed(2);
-    }
-
-    function enviarZap() {
-        let it = "";
-        document.querySelectorAll('.linha-mercadoria').forEach(l => {
-            const d = l.querySelector('.m-desc').value.toUpperCase();
-            if(d) it += `- ${l.querySelector('.m-un').value}X ${d}\n`;
-        });
-
-        const msg = `*NOVO PEDIDO*\n\n` +
-                    `DATA DO PEDIDO: ${document.getElementById('i-data').value}\n` +
-                    `DATA DA ENTREGA: ${document.getElementById('i-entrega').value}\n\n` +
-                    `VENDEDOR: ${document.getElementById('i-vendedor').value.toUpperCase()}\n` +
-                    `SUPERVISOR: ${document.getElementById('i-supervisor').value.toUpperCase()}\n\n` +
-                    `CLIENTE: ${document.getElementById('i-cliente').value.toUpperCase()}\n` +
-                    `ENDERECO: ${document.getElementById('i-rua').value.toUpperCase()}, ${document.getElementById('i-num').value}\n` +
-                    `BAIRRO: ${document.getElementById('i-bairro').value.toUpperCase()}\n` +
-                    `REFERENCIA: ${document.getElementById('i-ref').value.toUpperCase()}\n\n` +
-                    `MERCADORIAS:\n${it}\n` +
-                    `FORMA DE PAGAMENTO: ${document.getElementById('i-pagamento').value}\n` +
-                    `TOTAL: R$ ${document.getElementById('i-total').value}\n\n` +
-                    `OBS: ${document.getElementById('i-obs').value.toUpperCase()}`;
-
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
-    }
-
-    function imprimir() {
-        const h = `<div class="via"><h2>VIA LOJA</h2><p>CLIENTE: ${document.getElementById('i-cliente').value.toUpperCase()}</p><p>VENDEDOR: ${document.getElementById('i-vendedor').value.toUpperCase()}</p><hr><p>TOTAL: R$ ${document.getElementById('i-total').value}</p></div>
-                   <div class="via"><h2>VIA CLIENTE</h2><p>CLIENTE: ${document.getElementById('i-cliente').value.toUpperCase()}</p><p>PAGAMENTO: ${document.getElementById('i-pagamento').value}</p><hr><p>TOTAL: R$ ${document.getElementById('i-total').value}</p></div>`;
-        document.getElementById('print-area').innerHTML = h;
-        window.print();
-    }
-</script>
-</body>
-</html>
+            <button onclick
