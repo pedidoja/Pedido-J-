@@ -10,15 +10,31 @@
 
     <style>
         body { font-family: sans-serif; background: #e9ecef; margin: 0; padding: 10px; }
-        .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: none; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); box-sizing: border-box; display: none; }
         .header { text-align: center; color: #1a73e8; border-bottom: 2px solid #1a73e8; margin-bottom: 20px; padding-bottom: 10px; font-weight: bold; font-size: 22px; }
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; text-transform: uppercase; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; text-transform: uppercase; color: #000; }
+        
+        /* Remove setas de campos numéricos */
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        textarea { height: auto; min-height: 48px; resize: vertical; }
+        .btn-add { background: #6c757d; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 15px; text-transform: uppercase; }
         .btn-acao { width: 100%; height: 55px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; color: white; background: #28a745; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
+        
         #tela-login { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
         .box-login { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
+
+        @media print {
+            @page { size: landscape; margin: 8mm; }
+            .no-print { display: none !important; }
+            #print-area { display: flex !important; width: 100%; justify-content: space-between; gap: 10px; }
+            .via { width: 48%; border: 1px dashed #000; padding: 10px; font-size: 12px; height: 170mm; box-sizing: border-box; }
+            .via h2 { text-align: center; font-size: 16px; margin-top: 0; }
+        }
+        #print-area { display: none; }
     </style>
 </head>
 <body>
@@ -26,7 +42,7 @@
 <div id="tela-login">
     <div class="box-login">
         <h2 style="color: #1a73e8;">PEDIDO JÁ</h2>
-        <div id="status">Carregando...</div>
+        <div id="status">Verificando...</div>
         <div id="form-auth" style="display:none;">
             <input type="email" id="log-email" placeholder="E-mail" style="text-transform:none; margin-bottom:10px;">
             <input type="password" id="log-senha" placeholder="Senha" style="text-transform:none; margin-bottom:10px;">
@@ -35,59 +51,20 @@
     </div>
 </div>
 
-<div class="container" id="app-principal">
+<div class="container no-print" id="app-principal">
     <div class="header">PEDIDO JÁ</div>
+    
+    <div style="display: flex; gap: 10px;">
+        <div class="campo" style="flex: 1;"><label>Data Pedido</label><input type="date" id="i-data"></div>
+        <div class="campo" style="flex: 1;"><label>Data Entrega</label><input type="date" id="i-entrega"></div>
+    </div>
+
     <div class="campo"><label>Cliente</label><input type="text" id="i-cliente"></div>
-    <div class="campo"><label>Total</label><input type="number" id="i-total" placeholder="0.00"></div>
-    <button class="btn-acao" onclick="enviarZap()">WhatsApp</button>
-    <button class="btn-acao" style="background:#6c757d; height: 35px; font-size: 11px;" onclick="sair()">Sair da Conta</button>
-</div>
+    
+    <div style="display: flex; gap: 10px;">
+        <div class="campo" style="flex: 3;"><label>Rua</label><input type="text" id="i-rua"></div>
+        <div class="campo" style="flex: 1;"><label>Nº</label><input type="text" id="i-num"></div>
+    </div>
 
-<script>
-    // Configuração do seu Firebase
-    const firebaseConfig = {
-        apiKey: "AIzaSyBCO-wCiMGjrFwViCCzF4pdJU78lJVj4vE",
-        authDomain: "root-engine-465612-t1.firebaseapp.com",
-        projectId: "root-engine-465612-t1",
-        storageBucket: "root-engine-465612-t1.firebasestorage.app",
-        messagingSenderId: "796107955427",
-        appId: "1:796107955427:web:5a94f73e254f5c291239d6"
-    };
-
-    // Inicializa o Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-
-    // Função de Login
-    function fazerLogin() {
-        const e = document.getElementById('log-email').value;
-        const s = document.getElementById('log-senha').value;
-        auth.signInWithEmailAndPassword(e, s).catch(err => alert("Erro: " + err.message));
-    }
-
-    // Função Sair
-    function sair() {
-        auth.signOut().then(() => location.reload());
-    }
-
-    // Monitor de Conexão (O Coração do App)
-    auth.onAuthStateChanged((user) => {
-        document.getElementById('status').style.display = 'none';
-        if (user) {
-            document.getElementById('tela-login').style.display = 'none';
-            document.getElementById('app-principal').style.display = 'block';
-        } else {
-            document.getElementById('form-auth').style.display = 'block';
-        }
-    });
-
-    function enviarZap() {
-        const c = document.getElementById('i-cliente').value;
-        const t = document.getElementById('i-total').value;
-        const txt = `*PEDIDO JÁ*\nCliente: ${c}\nTotal: R$ ${t}`;
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`);
-    }
-</script>
-
-</body>
-</html>
+    <div style="display: flex; gap: 10px;">
+        <div class="campo" style="flex: 1;"><label>Bairro</label><input type
