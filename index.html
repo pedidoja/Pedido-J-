@@ -195,6 +195,9 @@
     function novoPedido() { if (confirm("Limpar pedido atual?")) location.reload(); }
 
     function executarImpressao() {
+        // GATILHO FIREBASE
+        if(window.salvarPedidoNoFirebase) window.salvarPedidoNoFirebase();
+
         const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
         let mercsHTML = "";
         document.querySelectorAll('.linha-mercadoria').forEach(linha => {
@@ -245,6 +248,9 @@
     }
 
     function enviarWhatsApp() {
+        // GATILHO FIREBASE
+        if(window.salvarPedidoNoFirebase) window.salvarPedidoNoFirebase();
+
         const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
         const f = (id) => document.getElementById(id).value.toUpperCase();
         let itens = "";
@@ -265,15 +271,11 @@
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
     }
 </script>
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
   const firebaseConfig = {
     apiKey: "AIzaSyBCO-wCiMGjrFwViCCzF4pdJU78lJVj4vE",
     authDomain: "root-engine-465612-t1.firebaseapp.com",
@@ -284,9 +286,26 @@
     measurementId: "G-K9TGDZTPL6"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+  const db = getFirestore(app);
+
+  // Função Global que envia para o banco
+  window.salvarPedidoNoFirebase = async function() {
+      try {
+          const dados = {
+              cliente: document.getElementById('i-cliente').value.toUpperCase(),
+              data_pedido: document.getElementById('i-data').value,
+              total: document.getElementById('i-v-total').value,
+              vendedor: document.getElementById('i-vend').value.toUpperCase(),
+              criado_em: serverTimestamp()
+          };
+          await addDoc(collection(db, "pedidos"), dados);
+          console.log("Pedido salvo no Firebase com sucesso!");
+      } catch (e) {
+          console.error("Erro ao salvar:", e);
+      }
+  };
 </script>
+
 </body>
 </html>
