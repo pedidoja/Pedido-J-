@@ -3,45 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pedido Já - Oficial</title>
+    <title>Pedido Já</title>
     
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1a73e8">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1532/1532674.png">
+
     <style>
         body { font-family: sans-serif; background: #e9ecef; margin: 0; padding: 10px; }
         .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); box-sizing: border-box; }
         .header { text-align: center; color: #1a73e8; border-bottom: 2px solid #1a73e8; margin-bottom: 20px; padding-bottom: 10px; font-weight: bold; font-size: 22px; }
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
-        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; text-transform: uppercase; color: #000; }
         
-        /* Remove setinhas dos números */
+        input, textarea, select { 
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; 
+            font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; 
+            text-transform: uppercase; color: #000; 
+        }
+        
+        textarea { height: auto; min-height: 48px; resize: vertical; font-family: sans-serif; }
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
-
-        textarea { height: auto; min-height: 48px; resize: vertical; }
-        .btn-add { background: #6c757d; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-bottom: 15px; text-transform: uppercase; }
-        .btn-acao { width: 100%; height: 55px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; color: white; background: #28a745; margin-top: 10px; display: flex; align-items: center; justify-content: center; }
+        .btn-add { background: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; margin-bottom: 15px; text-transform: uppercase; width: 100% !important; display: block; }
+        .area-botoes { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .btn-acao { width: 100%; height: 55px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; color: white; display: flex; align-items: center; justify-content: center; background: #28a745; }
+        .btn-novo { background: #6c757d; }
+        @media (min-width: 600px) { body { padding: 20px; } .area-botoes { flex-direction: row; } .btn-add { width: auto; } }
+        #detalhe-pagamento { background: #fdf2f2; border: 1px solid #ffc1c1; padding: 12px; border-radius: 6px; margin-bottom: 15px; display: none; font-size: 14px; line-height: 1.6; color: #333; font-weight: bold; text-transform: uppercase; font-family: monospace; }
         
         @media print {
             @page { size: landscape; margin: 8mm; }
+            html, body { height: 100%; overflow: hidden; margin: 0 !important; padding: 0 !important; background: white; }
             .no-print { display: none !important; }
-            #print-area { display: flex !important; width: 100%; justify-content: space-between; gap: 10px; }
-            .via { width: 48%; border: 1px dashed #000; padding: 10px; font-size: 12px; height: 170mm; box-sizing: border-box; }
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; color: #000 !important; }
+            #print-area { position: absolute; left: 0; top: 0; display: flex !important; width: 100%; justify-content: space-between; padding: 0; zoom: 98%; }
+            .via { width: 47%; border: 1px dashed #000; padding: 10px; display: flex; flex-direction: column; font-size: 12px; color: #000 !important; height: 175mm; box-sizing: border-box; overflow: hidden; }
+            .header-p { text-align: center; font-weight: bold; font-size: 17px; border-bottom: 2px solid #000; margin-bottom: 10px; color: #000 !important; }
+            .assinaturas-v { margin-top: auto; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #000; padding-top: 8px; color: #000 !important; }
+            b, strong { color: #000 !important; }
         }
-        #print-area { display: none; }
     </style>
 </head>
 <body>
 
-<div class="container no-print" id="app-principal">
+<div class="container no-print">
     <div class="header">PEDIDO JÁ</div>
     
     <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 1;"><label>Data do pedido</label><input type="date" id="i-data"></div>
-        <div class="campo" style="flex: 1;"><label>Data da entrega</label><input type="date" id="i-entrega"></div>
+        <div class="campo" style="flex: 1;"><label>Data Pedido</label><input type="date" id="i-data"></div>
+        <div class="campo" style="flex: 1;"><label>Entrega</label><input type="date" id="i-entrega"></div>
     </div>
 
     <div class="campo"><label>Cliente</label><input type="text" id="i-cliente"></div>
-    
+
     <div style="display: flex; gap: 10px;">
         <div class="campo" style="flex: 3;"><label>Rua</label><input type="text" id="i-rua"></div>
         <div class="campo" style="flex: 1;"><label>Nº</label><input type="text" id="i-num"></div>
@@ -52,136 +68,201 @@
         <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="i-cidade"></div>
     </div>
 
-    <div class="campo"><label>Ponto de Referência</label><input type="text" id="i-ref"></div>
-
-    <div id="lista-mercadorias">
-        <label>Mercadorias</label>
-        <div class="linha-mercadoria" style="display: flex; gap: 5px; margin-bottom: 8px;">
-            <textarea placeholder="DESCRIÇÃO" style="flex: 3;" class="m-desc"></textarea>
-            <input type="number" placeholder="QTD" style="flex: 0.8;" class="m-un" oninput="calcularTudo()">
-            <input type="number" step="0.01" placeholder="VALOR" style="flex: 1.5;" class="m-val" oninput="calcularTudo()">
-        </div>
-    </div>
-    <button type="button" class="btn-add" onclick="addLinha()">+ ADICIONAR ITEM</button>
-
-    <div class="campo"><label>Forma de Pagamento</label>
-        <select id="i-pagamento" onchange="toggleCartao()">
-            <option value="DINHEIRO">DINHEIRO</option>
-            <option value="PIX">PIX</option>
-            <option value="CARTÃO DE CRÉDITO">CARTÃO DE CRÉDITO</option>
-            <option value="CARTÃO DE DÉBITO">CARTÃO DE DÉBITO</option>
-        </select>
-    </div>
-
-    <div id="div-parcelas" class="campo" style="display:none;">
-        <label>Número de Parcelas</label>
-        <select id="i-parcelas" onchange="calcularTudo()">
-            <option value="1" data-taxa="3.37">1X (3.37%)</option>
-            <option value="2" data-taxa="4.25">2X (4.25%)</option>
-            <option value="3" data-taxa="5.14">3X (5.14%)</option>
-            <option value="4" data-taxa="6.04">4X (6.04%)</option>
-            <option value="5" data-taxa="6.96">5X (6.96%)</option>
-            <option value="6" data-taxa="7.88">6X (7.88%)</option>
-            <option value="7" data-taxa="10.82">7X (10.82%)</option>
-            <option value="8" data-taxa="11.83">8X (11.83%)</option>
-            <option value="9" data-taxa="12.86">9X (12.86%)</option>
-            <option value="10" data-taxa="13.91">10X (13.91%)</option>
-            <option value="11" data-taxa="14.97">11X (14.97%)</option>
-            <option value="12" data-taxa="16.06">12X (16.06%)</option>
-        </select>
-    </div>
+    <div class="campo"><label>Ponto de Referência</label><textarea id="i-ref"></textarea></div>
 
     <div style="display: flex; gap: 10px;">
-        <div class="campo" style="flex: 1;"><label>Vendedor</label><input type="text" id="i-vendedor"></div>
-        <div class="campo" style="flex: 1;"><label>Supervisor</label><input type="text" id="i-supervisor"></div>
+        <div class="campo" style="flex: 1;"><label>Telefone</label><input type="tel" id="i-tel"></div>
+        <div class="campo" style="flex: 1.5;"><label>Obs (Breve)</label><textarea id="i-obs-breve"></textarea></div>
     </div>
 
-    <div style="display: flex; gap: 5px;">
-        <div class="campo" style="flex: 1;"><label>Frete</label><input type="number" id="i-frete" value="0.00" oninput="calcularTudo()"></div>
-        <div class="campo" style="flex: 1;"><label>Desc.</label><input type="number" id="i-desc" value="0.00" oninput="calcularTudo()"></div>
-        <div class="campo" style="flex: 1.5;"><label>Total</label><input type="text" id="i-total" readonly style="font-weight: bold; color: #1a73e8; background: #f0f0f0;"></div>
+    <div id="lista-mercadorias">
+        <label>Mercadorias (Qtd x Valor Unit.)</label>
+        <div class="linha-mercadoria" style="display: flex; gap: 5px; margin-bottom: 8px;">
+            <textarea placeholder="Item" style="flex: 3;" class="m-desc"></textarea>
+            <input type="text" placeholder="Qtd" style="flex: 0.8;" class="m-un" oninput="calcularTotais()">
+            <input type="number" step="0.01" placeholder="R$ Un" style="flex: 1.5;" class="m-val" oninput="calcularTotais()" onblur="formatarMoeda(this)">
+        </div>
+    </div>
+    
+    <button type="button" class="btn-add" onclick="adicionarLinha()">+ ADICIONAR ITEM</button>
+    
+    <div style="display: flex; gap: 5px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #ddd; flex-wrap: wrap;">
+        <div class="campo" style="flex: 1; min-width: 80px;"><label>Subtotal</label><input type="number" id="i-v-merc" readonly tabindex="-1"></div>
+        <div class="campo" style="flex: 1; min-width: 80px;"><label>Frete</label><input type="number" step="0.01" id="i-v-frete" oninput="calcularTotais()" onblur="formatarMoeda(this)"></div>
+        <div class="campo" style="flex: 1; min-width: 80px;"><label>Desconto</label><input type="number" step="0.01" id="i-v-desc" oninput="calcularTotais()" onblur="formatarMoeda(this)" style="color: #d32f2f;"></div>
+        <div class="campo" style="flex: 1; min-width: 100px;"><label>Total</label><input type="number" id="i-v-total" readonly style="font-weight: bold; color: #1a73e8;" tabindex="-1"></div>
     </div>
 
-    <div class="campo"><label>Observações</label><textarea id="i-obs"></textarea></div>
+    <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+        <div class="campo" style="flex: 1; min-width: 140px;"><label>Pagamento</label><select id="i-pagamento" onchange="alternarCartao()"><option value="Pix">Pix</option><option value="Dinheiro">Dinheiro</option><option value="Cartão">Cartão</option></select></div>
+        <div class="campo" id="box-tipo-cartao" style="flex: 1; display: none;"><label>Tipo</label><select id="i-tipo-cartao" onchange="alternarCartao()"><option value="Credito">Crédito</option><option value="Debito">Débito</option></select></div>
+        <div class="campo" id="box-parcelas" style="flex: 1; display: none;"><label>Parcelas</label><select id="i-parcelas" onchange="calcularTotais()">
+            <option value="1">1x</option><option value="2">2x</option><option value="3">3x</option><option value="4">4x</option><option value="5">5x</option><option value="6">6x</option>
+            <option value="7">7x</option><option value="8">8x</option><option value="9">9x</option><option value="10">10x</option><option value="11">11x</option><option value="12">12x</option>
+        </select></div>
+        <div class="campo" id="box-entrada" style="flex: 1.5; display: none;"><label>Dinheiro/Pix</label><input type="number" step="0.01" id="i-v-entrada" oninput="calcularTotais()" onblur="formatarMoeda(this)"></div>
+    </div>
 
-    <button class="btn-acao" onclick="enviarZap()">Enviar WhatsApp</button>
-    <button class="btn-acao" style="background:#6c757d;" onclick="imprimir()">Imprimir PDF (2 Vias)</button>
+    <div id="detalhe-pagamento"></div>
+
+    <div class="campo"><label>Observações Gerais</label><textarea id="i-obs" style="height: 60px;"></textarea></div>
+
+    <div style="display: flex; gap: 10px;">
+        <div class="campo" style="flex: 1;"><label>Vendedor</label><input type="text" id="i-vend"></div>
+        <div class="campo" style="flex: 1;"><label>Supervisor</label><input type="text" id="i-super"></div>
+    </div>
+
+    <div class="area-botoes">
+        <button class="btn-acao btn-novo" onclick="novoPedido()">Limpar</button>
+        <button class="btn-acao" style="background: #25d366;" onclick="enviarWhatsApp()">WhatsApp</button>
+        <button class="btn-acao" onclick="executarImpressao()">PDF</button>
+    </div>
 </div>
 
 <div id="print-area"></div>
 
 <script>
-    function toggleCartao() {
-        const pag = document.getElementById('i-pagamento').value;
-        document.getElementById('div-parcelas').style.display = (pag === "CARTÃO DE CRÉDITO") ? "block" : "none";
-        calcularTudo();
-    }
+    function formatarMoeda(input) { if (input.value !== "") input.value = parseFloat(input.value).toFixed(2); }
 
-    function addLinha() {
+    function adicionarLinha() {
+        const container = document.getElementById('lista-mercadorias');
         const div = document.createElement('div');
         div.className = 'linha-mercadoria';
-        div.style = "display: flex; gap: 5px; margin-bottom: 8px;";
-        div.innerHTML = `<textarea style="flex: 3;" class="m-desc"></textarea>
-                         <input type="number" style="flex: 0.8;" class="m-un" oninput="calcularTudo()">
-                         <input type="number" step="0.01" style="flex: 1.5;" class="m-val" oninput="calcularTudo()">`;
-        document.getElementById('lista-mercadorias').appendChild(div);
-    }
-
-    function calcularTudo() {
-        let subtotal = 0;
-        document.querySelectorAll('.linha-mercadoria').forEach(l => {
-            const q = parseFloat(l.querySelector('.m-un').value) || 0;
-            const v = parseFloat(l.querySelector('.m-val').value) || 0;
-            subtotal += (q * v);
-        });
-        
-        let valorBase = subtotal + (parseFloat(document.getElementById('i-frete').value) || 0) - (parseFloat(document.getElementById('i-desc').value) || 0);
-        
-        if(document.getElementById('i-pagamento').value === "CARTÃO DE CRÉDITO") {
-            const sel = document.getElementById('i-parcelas');
-            const taxa = parseFloat(sel.options[sel.selectedIndex].getAttribute('data-taxa'));
-            valorBase = valorBase / (1 - (taxa / 100)); // Cálculo de juros por fora para garantir o recebimento líquido
-        }
-        
-        document.getElementById('i-total').value = valorBase.toFixed(2);
-    }
-
-    function enviarZap() {
-        let itensMsg = "";
-        document.querySelectorAll('.linha-mercadoria').forEach(l => {
-            const d = l.querySelector('.m-desc').value.toUpperCase();
-            if(d) itensMsg += `- ${l.querySelector('.m-un').value}X ${d}\n`;
-        });
-
-        const pag = document.getElementById('i-pagamento').value;
-        const parcelas = (pag === "CARTÃO DE CRÉDITO") ? ` (${document.getElementById('i-parcelas').value}X)` : "";
-
-        const msg = `*PEDIDO JÁ*\n\n` +
-            `Data do pedido: ${document.getElementById('i-data').value}\n` +
-            `Data da entrega: ${document.getElementById('i-entrega').value}\n\n` +
-            `CLIENTE: ${document.getElementById('i-cliente').value.toUpperCase()}\n` +
-            `ENDEREÇO: ${document.getElementById('i-rua').value.toUpperCase()}, ${document.getElementById('i-num').value}\n` +
-            `BAIRRO: ${document.getElementById('i-bairro').value.toUpperCase()}\n` +
-            `REFERÊNCIA: ${document.getElementById('i-ref').value.toUpperCase()}\n\n` +
-            `MERCADORIAS:\n${itensMsg}\n` +
-            `FORMA DE PAGAMENTO: ${pag}${parcelas}\n` +
-            `VENDEDOR: ${document.getElementById('i-vendedor').value.toUpperCase()}\n` +
-            `SUPERVISOR: ${document.getElementById('i-supervisor').value.toUpperCase()}\n` +
-            `TOTAL: R$ ${document.getElementById('i-total').value}\n\n` +
-            `OBSERVAÇÕES: ${document.getElementById('i-obs').value.toUpperCase()}`;
-
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
-    }
-
-    function imprimir() {
-        const total = document.getElementById('i-total').value;
-        const cliente = document.getElementById('i-cliente').value.toUpperCase();
-        const h = `
-            <div class="via"><h2>VIA LOJA</h2><p>CLIENTE: ${cliente}</p><hr><p>TOTAL: R$ ${total}</p></div>
-            <div class="via"><h2>VIA CLIENTE</h2><p>CLIENTE: ${cliente}</p><hr><p>TOTAL: R$ ${total}</p></div>
+        div.style.display = "flex"; 
+        div.style.gap = "5px"; 
+        div.style.marginBottom = "8px";
+        div.innerHTML = `
+            <textarea placeholder="Item" style="flex: 3;" class="m-desc"></textarea>
+            <input type="text" placeholder="Qtd" style="flex: 0.8;" class="m-un" oninput="calcularTotais()">
+            <input type="number" step="0.01" placeholder="R$ Un" style="flex: 1.5;" class="m-val" oninput="calcularTotais()" onblur="formatarMoeda(this)">
         `;
-        document.getElementById('print-area').innerHTML = h;
+        container.appendChild(div);
+    }
+
+    function alternarCartao() {
+        const pag = document.getElementById('i-pagamento').value;
+        const tipo = document.getElementById('i-tipo-cartao').value;
+        document.getElementById('box-tipo-cartao').style.display = (pag === 'Cartão') ? 'block' : 'none';
+        document.getElementById('box-parcelas').style.display = (pag === 'Cartão' && tipo === 'Credito') ? 'block' : 'none';
+        document.getElementById('box-entrada').style.display = (pag === 'Cartão') ? 'block' : 'none';
+        document.getElementById('detalhe-pagamento').style.display = (pag === 'Cartão') ? 'block' : 'none';
+        calcularTotais();
+    }
+
+    const taxasCredito = { "1": 3.37, "2": 4.90, "3": 6.80, "4": 7.90, "5": 9.80, "6": 11.49, "7": 12.80, "8": 14.87, "9": 15.83, "10": 16.87, "11": 18.89, "12": 20.10 };
+    const taxaDebito = 2.00;
+
+    function montarTextoPagamento(totalPedido, entrada, pag, tipo, parcelas) {
+        if (pag !== 'Cartão') return "";
+        let baseCartao = Math.max(0, totalPedido - entrada);
+        let taxa = (tipo === 'Credito') ? (taxasCredito[parcelas] / 100) : (taxaDebito / 100);
+        let valorCartaoComTaxa = baseCartao + (baseCartao * taxa);
+        let valorFinalTotal = entrada + valorCartaoComTaxa;
+        
+        let texto = `CARTÃO R$ ${valorCartaoComTaxa.toFixed(2)}`;
+        if (tipo === 'Credito') texto += ` EM ${parcelas}x de R$ ${(valorCartaoComTaxa/parcelas).toFixed(2)}`;
+        else texto += ` (DÉBITO)`;
+        
+        if (entrada > 0) texto += `<br>DINHEIRO/PIX R$ ${entrada.toFixed(2)}`;
+        texto += `<br>TOTAL FINAL R$ ${valorFinalTotal.toFixed(2)}`;
+        return texto;
+    }
+
+    function calcularTotais() {
+        let somaMerc = 0;
+        const linhas = document.querySelectorAll('.linha-mercadoria');
+        linhas.forEach(linha => {
+            const qtd = parseFloat(linha.querySelector('.m-un').value) || 0;
+            const vUnit = parseFloat(linha.querySelector('.m-val').value) || 0;
+            if(qtd > 0 && vUnit > 0) somaMerc += (qtd * vUnit);
+            else if(vUnit > 0) somaMerc += vUnit;
+        });
+        
+        const frete = parseFloat(document.getElementById('i-v-frete').value) || 0;
+        const desc = parseFloat(document.getElementById('i-v-desc').value) || 0;
+        const totalPedido = Math.max(0, somaMerc + frete - desc);
+        const entrada = parseFloat(document.getElementById('i-v-entrada').value) || 0;
+        
+        document.getElementById('i-v-merc').value = somaMerc.toFixed(2);
+        document.getElementById('i-v-total').value = totalPedido.toFixed(2);
+        
+        const pag = document.getElementById('i-pagamento').value;
+        if (pag === 'Cartão') {
+            document.getElementById('detalhe-pagamento').innerHTML = montarTextoPagamento(totalPedido, entrada, pag, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
+        }
+    }
+
+    function novoPedido() { if (confirm("Limpar pedido atual?")) location.reload(); }
+
+    function executarImpressao() {
+        const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
+        let mercsHTML = "";
+        document.querySelectorAll('.linha-mercadoria').forEach(linha => {
+            const desc = linha.querySelector('.m-desc').value.toUpperCase();
+            const unTxt = linha.querySelector('.m-un').value || "1";
+            const qtdNum = parseFloat(unTxt) || 1;
+            const vUnit = parseFloat(linha.querySelector('.m-val').value) || 0;
+            const totalLinha = qtdNum * vUnit;
+            if(desc || vUnit > 0) {
+                mercsHTML += `<div style="display:flex; margin-bottom:4px;"><div style="flex:3">${desc}</div><div style="flex:0.6; text-align:center">${unTxt}</div><div style="flex:1.2; text-align:right">R$ ${totalLinha.toFixed(2)}</div></div>`;
+            }
+        });
+        
+        const f = (id) => document.getElementById(id).value.toUpperCase();
+        const vTotal = parseFloat(document.getElementById('i-v-total').value);
+        const vDesc = parseFloat(document.getElementById('i-v-desc').value) || 0;
+        const resumoPagamento = montarTextoPagamento(vTotal, parseFloat(document.getElementById('i-v-entrada').value) || 0, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
+        
+        let descontoHTML = vDesc > 0 ? `<div style="display:flex; justify-content:space-between; color: #d32f2f;"><span>DESCONTO:</span><span>- R$ ${vDesc.toFixed(2)}</span></div>` : "";
+
+        const viaHTML = `<div class="via">
+            <div class="header-p">PEDIDO JÁ</div>
+            <div style="line-height: 1.4;">
+                <div><b>DATA DO PEDIDO:</b> ${formatarData(document.getElementById('i-data').value)}</div>
+                <div><b>DATA DA ENTREGA:</b> ${formatarData(document.getElementById('i-entrega').value)}</div>
+            </div>
+            <div style="margin-top:8px"><b>CLIENTE:</b> ${f('i-cliente')}</div>
+            <div><b>RUA:</b> ${f('i-rua')}, ${f('i-num')}</div>
+            <div><b>BAIRRO:</b> ${f('i-bairro')} - ${f('i-cidade')}</div>
+            <div><b>REF:</b> ${f('i-ref')}</div>
+            <div><b>TEL:</b> ${f('i-tel')} | <b>OBS:</b> ${f('i-obs-breve')}</div>
+            <div style="margin-top:10px; border-bottom:1.5px solid #000; font-weight:bold; display:flex;">
+                <div style="flex:3">MERCADORIA</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
+            </div>
+            <div style="min-height:70px; margin-top:10px;">${mercsHTML}</div>
+            <div style="margin-top:auto; border-top:1.5px solid #000; padding-top:5px">
+                <div style="display:flex; justify-content:space-between"><span>SUBTOTAL:</span><span>R$ ${document.getElementById('i-v-merc').value}</span></div>
+                <div style="display:flex; justify-content:space-between"><span>FRETE:</span><span>R$ ${document.getElementById('i-v-frete').value || "0.00"}</span></div>
+                ${descontoHTML}
+                <div style="display:flex; justify-content:space-between; font-weight:bold"><span>TOTAL:</span><span>R$ ${vTotal.toFixed(2)}</span></div>
+            </div>
+            <div style="margin-top:5px; font-size:11px; line-height: 1.2;"><b>PAGAMENTO:</b><br>${resumoPagamento}</div>
+            <div style="margin-top:5px; font-size:11px"><b>OBS:</b> ${f('i-obs')}</div>
+            <div class="assinaturas-v"><div><b>VENDEDOR:</b> ${f('i-vend')}</div><div><b>SUPERVISOR:</b> ${f('i-super')}</div></div>
+        </div>`;
+        document.getElementById('print-area').innerHTML = viaHTML + viaHTML;
         window.print();
+    }
+
+    function enviarWhatsApp() {
+        const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
+        const f = (id) => document.getElementById(id).value.toUpperCase();
+        let itens = "";
+        document.querySelectorAll('.linha-mercadoria').forEach(linha => {
+            const desc = linha.querySelector('.m-desc').value.toUpperCase();
+            const un = linha.querySelector('.m-un').value || "1";
+            const vUnit = parseFloat(linha.querySelector('.m-val').value) || 0;
+            const totalLinha = (parseFloat(un) || 1) * vUnit;
+            if(desc) itens += `• ${un.toUpperCase()} - ${desc} (R$ ${totalLinha.toFixed(2)})\n`;
+        });
+        const vTotal = parseFloat(document.getElementById('i-v-total').value);
+        const vDesc = parseFloat(document.getElementById('i-v-desc').value) || 0;
+        const detalhesPagamento = montarTextoPagamento(vTotal, parseFloat(document.getElementById('i-v-entrada').value) || 0, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
+        
+        let descMsg = vDesc > 0 ? `*DESCONTO:* R$ ${vDesc.toFixed(2)}\n` : "";
+        
+        let msg = `*PEDIDO JÁ*\n\n*DATA DO PEDIDO:* ${formatarData(document.getElementById('i-data').value)}\n*DATA DA ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n*REF:* ${f('i-ref')}\n*TELEFONE:* ${f('i-tel')}\n*OBS:* ${f('i-obs-breve')}\n\n*ITENS:*\n${itens}\n*FRETE:* R$ ${document.getElementById('i-v-frete').value || "0,00"}\n${descMsg}*TOTAL:* R$ ${vTotal.toFixed(2)}\n*FORMA:* ${f('i-pagamento')}\n${detalhesPagamento.replace(/<br>/g, '\n')}\n*OBS GERAIS:* ${f('i-obs')}\n\n*VENDEDOR:* ${f('i-vend')}\n*SUPERVISOR:* ${f('i-super')}`;
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
     }
 </script>
 </body>
