@@ -4,32 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pedido Já</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1a73e8">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/1532/1532674.png">
-
     <style>
+        /* ESTILO BASE */
         body { font-family: sans-serif; background: #e9ecef; margin: 0; padding: 10px; }
-        .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); box-sizing: border-box; }
+        .container { max-width: 700px; margin: auto; background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: none; } /* Começa escondido */
         .header { text-align: center; color: #1a73e8; border-bottom: 2px solid #1a73e8; margin-bottom: 20px; padding-bottom: 10px; font-weight: bold; font-size: 22px; }
         .campo { margin-bottom: 12px; }
         label { display: block; font-size: 11px; font-weight: bold; color: #555; text-transform: uppercase; margin-bottom: 3px; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; text-transform: uppercase; color: #000; }
+        .btn-acao { width: 100%; height: 55px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; color: white; display: flex; align-items: center; justify-content: center; background: #28a745; margin-top: 10px; }
         
-        input, textarea, select { 
-            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; 
-            font-size: 16px; box-sizing: border-box; background: #fff; height: 48px; 
-            text-transform: uppercase; color: #000; 
-        }
-        
-        textarea { height: auto; min-height: 48px; resize: vertical; font-family: sans-serif; }
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; }
-        .btn-add { background: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; margin-bottom: 15px; text-transform: uppercase; width: 100% !important; display: block; }
-        .area-botoes { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-        .btn-acao { width: 100%; height: 55px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase; color: white; display: flex; align-items: center; justify-content: center; background: #28a745; }
-        .btn-novo { background: #6c757d; }
-        
-        /* ESTILOS DO LOGIN E RODAPÉ */
+        /* TELA DE LOGIN */
         #tela-login { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1a73e8; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; }
-        .box-login { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.
+        .box-login { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 400px; text-align: center; }
+        .input-login { margin-bottom: 15px; text-transform: none !important; }
+        .footer-contato { text-align: center; margin-top: 20px; font-size: 11px; color: #888; }
+        
+        @media print { .no-print { display: none !important; } }
+    </style>
+</head>
+<body>
+
+<div id="tela-login">
+    <div class="box-login">
+        <h2 style="color: #1a73e8;">PEDIDO JÁ</h2>
+        <input type="email" id="log-email" class="input-login" placeholder="E-mail">
+        <input type="password" id="log-senha" class="input-login" placeholder="Senha">
+        <button onclick="fazerLogin()" class="btn-acao" style="background: #1a73e8;">ENTRAR</button>
+        <button onclick="criarConta()" style="background:none; border:none; color:#1a73e8; margin-top:15px; font-weight:bold; cursor:pointer;">CRIAR CONTA (7 DIAS GRÁTIS)</button>
+        <p id="msg-erro" style="color: red; font-size: 12px; margin-top: 10px; display: none;"></p>
+    </div>
+</div>
+
+<div class="container no-print" id="app-principal">
+    <div class="header">PEDIDO JÁ</div>
+    <div class="campo"><label>Cliente</label><input type="text" id="i-cliente"></div>
+    <div class="campo"><label>Vendedor</label><input type="text" id="i-vend"></div>
+    <div class="area-botoes">
+        <button class="btn-acao" style="background: #25d366;" onclick="alert('Pedido Enviado!')">WhatsApp</button>
+        <button class="btn-acao" style="background: #6c757d;" onclick="deslogar()">Sair</button>
+    </div>
+    <div class="footer-contato">CONTATODESENVOLVEDOR</div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBCO-wCiMGjrFwViCCzF4pdJU78lJVj4vE",
+        authDomain: "root-engine-465612-t1.firebaseapp.com",
+        projectId: "root-engine-465612-t1",
+        storageBucket: "root-engine-465612-t1.firebasestorage.app",
+        messagingSenderId: "796107955427",
+        appId: "1:796107955427:web:5a94f73e254f5c291239d6"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const getFingerprint = () => {
+        let id = localStorage.getItem('device_id');
+        if (!id) { id = 'dev_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('device_id', id); }
+        return id;
+    };
+
+    window.criarConta = async () => {
+        const e = document.getElementById('log-email').value;
+        const s = document.getElementById('log-senha').value;
+        try {
+            const res = await createUserWithEmailAndPassword(auth, e, s);
+            await setDoc(doc(db, "usuarios", res.user.uid), {
+                email: e, aparelho: getFingerprint(), inicio: new Date(), plano: "teste"
+            });
+            alert("Conta criada!");
+        } catch (err) { alert("Erro: " + err.message); }
+    };
+
+    window.fazerLogin = async () => {
+        const e = document.getElementById('log-email').value;
+        const s = document.getElementById('log-senha').value;
+        try { await signInWithEmailAndPassword(auth, e, s); } 
+        catch (err) { document.getElementById('msg-erro').innerText = "Dados incorretos"; document.getElementById('msg-erro').style.display='block'; }
+    };
+
+    window.deslogar = () => signOut(auth).then(() => location.reload());
+
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            const docSnap = await getDoc(doc(db, "usuarios", user.uid));
+            if (docSnap.exists()) {
+                const d = docSnap.data();
+                if (d.aparelho !== getFingerprint()) {
+                    alert("Acesso vinculado a outro celular.");
+                    signOut(auth);
+                } else {
+                    document.getElementById('tela-login').style.display = 'none';
+                    document.getElementById('app-principal').style.display = 'block';
+                }
+            }
+        } else {
+            document.getElementById('tela-login').style.display = 'flex';
+            document.getElementById('app-principal').style.display = 'none';
+        }
+    });
+</script>
+</body>
+</html>
