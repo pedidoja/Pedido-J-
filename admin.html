@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel Admin - PedidoJá</title>
+</head>
+<body>
+    <h2>Painel de Gestão de Assinaturas</h2>
+    <div id="lista-usuarios">Carregando usuários...</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCO-wCiMGjrFwViCCzF4pdJU78lJVj4vE",
+            authDomain: "root-engine-465612-t1.firebaseapp.com",
+            projectId: "root-engine-465612-t1",
+            storageBucket: "root-engine-465612-t1.firebasestorage.app",
+            messagingSenderId: "796107955427",
+            appId: "1:796107955427:web:f82b413f9a4e91c41239d6"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function carregarUsuarios() {
+            const querySnapshot = await getDocs(collection(db, "usuarios"));
+            let html = "<ul>";
+            querySnapshot.forEach((doc) => {
+                const dados = doc.data();
+                html += `<li>ID: ${doc.id} | Expira: ${dados.data_expiracao || 'Sem data'} 
+                         <button onclick="renovar('${doc.id}')">Renovar 30 dias</button></li>`;
+            });
+            document.getElementById('lista-usuarios').innerHTML = html + "</ul>";
+        }
+
+        window.renovar = async (uid) => {
+            let novaData = new Date();
+            novaData.setDate(novaData.getDate() + 30);
+            await updateDoc(doc(db, "usuarios", uid), { data_expiracao: novaData.toISOString().split('T')[0] });
+            alert("Assinatura renovada com sucesso!");
+            carregarUsuarios();
+        };
+
+        carregarUsuarios();
+    </script>
+</body>
+</html>
