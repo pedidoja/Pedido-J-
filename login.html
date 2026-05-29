@@ -7,7 +7,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBCO-wCiMGjrFwViCCzF4pdJU78lJVj4vE",
@@ -36,7 +36,7 @@
                     if (docSnap.exists()) {
                         const dados = docSnap.data();
                         
-                        // 1. TRAVA DE ASSINATURA
+                        // 1. VERIFICAÇÃO DE ASSINATURA (MANTIDA POR SEGURANÇA)
                         const dataHoje = new Date().toISOString().split('T')[0];
                         if (dados.data_expiracao && dataHoje > dados.data_expiracao) {
                             alert("Sua assinatura venceu! Entre em contato com o suporte.");
@@ -44,24 +44,10 @@
                             return;
                         }
 
-                        // 2. TRAVA DE DISPOSITIVO
-                        let deviceId = localStorage.getItem('deviceId');
-                        if (!deviceId) {
-                            deviceId = 'dev_' + Math.random().toString(36).substr(2, 9);
-                            localStorage.setItem('deviceId', deviceId);
-                        }
+                        // 2. TRAVA DE DISPOSITIVO REMOVIDA (ACESSO LIVRE)
+                        sessionStorage.setItem('logado', 'sim');
+                        window.location.href = "index.html";
 
-                        if (!dados.dispositivo_autorizado || dados.dispositivo_autorizado === "") {
-                            await updateDoc(docRef, { dispositivo_autorizado: deviceId });
-                            sessionStorage.setItem('logado', 'sim');
-                            window.location.href = "index.html";
-                        } else if (dados.dispositivo_autorizado === deviceId) {
-                            sessionStorage.setItem('logado', 'sim');
-                            window.location.href = "index.html";
-                        } else {
-                            await signOut(auth);
-                            alert("Acesso negado! Este aparelho não é o autorizado.");
-                        }
                     } else {
                         alert("Erro: Usuário não encontrado no banco.");
                     }
