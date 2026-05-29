@@ -36,7 +36,7 @@
                     if (docSnap.exists()) {
                         const dados = docSnap.data();
                         
-                        // 1. VERIFICAÇÃO DE ASSINATURA
+                        // 1. TRAVA DE ASSINATURA
                         const dataHoje = new Date().toISOString().split('T')[0];
                         if (dados.data_expiracao && dataHoje > dados.data_expiracao) {
                             alert("Sua assinatura venceu! Entre em contato com o suporte.");
@@ -44,7 +44,7 @@
                             return;
                         }
 
-                        // 2. VERIFICAÇÃO DE DISPOSITIVO
+                        // 2. TRAVA DE DISPOSITIVO
                         let deviceId = localStorage.getItem('deviceId');
                         if (!deviceId) {
                             deviceId = 'dev_' + Math.random().toString(36).substr(2, 9);
@@ -67,7 +67,7 @@
                     }
                 })
                 .catch((error) => {
-                    alert("E-mail ou senha incorretos ou erro de conexão: " + error.message);
+                    alert("E-mail ou senha incorretos: " + error.message);
                 });
         }
     </script>
@@ -80,4 +80,4 @@
         <button onclick="fazerLogin()">Entrar</button>
     </div>
 </body>
-</html>   
+</html>
