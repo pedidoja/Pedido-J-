@@ -2,11 +2,19 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Admin - PedidoJá</title>
+    <title>Admin - PedidoJá</title>
 </head>
 <body>
-    <h2>Painel de Gestão de Assinaturas</h2>
-    <div id="lista-usuarios">Carregando usuários...</div>
+    <div id="login-area" style="text-align: center; margin-top: 50px;">
+        <h3>Acesso Restrito</h3>
+        <input type="password" id="senhaAdmin" placeholder="Senha do Administrador">
+        <button onclick="verificarSenha()">Entrar</button>
+    </div>
+
+    <div id="painel-admin" style="display: none; margin-top: 50px;">
+        <h2>Gestão de Assinaturas</h2>
+        <div id="lista-usuarios">Carregando usuários...</div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -23,6 +31,20 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
+        // SENHA DEFINIDA AQUI (Mude 'suaSenha123' para o que você quiser)
+        const SENHA_CORRETA = "suaSenha125";
+
+        window.verificarSenha = () => {
+            const digitada = document.getElementById('senhaAdmin').value;
+            if (digitada === SENHA_CORRETA) {
+                document.getElementById('login-area').style.display = 'none';
+                document.getElementById('painel-admin').style.display = 'block';
+                carregarUsuarios();
+            } else {
+                alert("Senha incorreta!");
+            }
+        };
+
         async function carregarUsuarios() {
             const querySnapshot = await getDocs(collection(db, "usuarios"));
             let html = "<ul>";
@@ -38,11 +60,9 @@
             let novaData = new Date();
             novaData.setDate(novaData.getDate() + 30);
             await updateDoc(doc(db, "usuarios", uid), { data_expiracao: novaData.toISOString().split('T')[0] });
-            alert("Assinatura renovada com sucesso!");
+            alert("Assinatura renovada!");
             carregarUsuarios();
         };
-
-        carregarUsuarios();
     </script>
 </body>
 </html>
