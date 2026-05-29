@@ -19,7 +19,6 @@
             measurementId: "G-FV0YWFHK98"
         };
 
-        // Inicialização na ordem correta
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -31,43 +30,44 @@
             signInWithEmailAndPassword(auth, email, senha)
                 .then(async (userCredential) => {
                     const user = userCredential.user;
-                    
-                    // Identificador único do dispositivo
-                    let deviceId = localStorage.getItem('deviceId');
-                    if (!deviceId) {
-                        deviceId = 'dev_' + Math.random().toString(36).substr(2, 9);
-                        localStorage.setItem('deviceId', deviceId);
-                    }
-
-                    // Consulta o Firestore
                     const docRef = doc(db, "usuarios", user.uid);
                     const docSnap = await getDoc(docRef);
 
                     if (docSnap.exists()) {
-                        const dispositivoSalvo = docSnap.data().dispositivo_autorizado;
+                        const dados = docSnap.data();
+                        
+                        // 1. TRAVA DE ASSINATURA
+                        const dataHoje = new Date().toISOString().split('T')[0];
+                        if (dados.data_expiracao && dataHoje > dados.data_expiracao) {
+                            alert("Sua assinatura venceu! Entre em contato com o suporte.");
+                            await signOut(auth);
+                            return;
+                        }
 
-                        // Se estiver vazio, autoriza este aparelho
-                        if (!dispositivoSalvo || dispositivoSalvo === "") {
+                        // 2. TRAVA DE DISPOSITIVO
+                        let deviceId = localStorage.getItem('deviceId');
+                        if (!deviceId) {
+                            deviceId = 'dev_' + Math.random().toString(36).substr(2, 9);
+                            localStorage.setItem('deviceId', deviceId);
+                        }
+
+                        if (!dados.dispositivo_autorizado || dados.dispositivo_autorizado === "") {
                             await updateDoc(docRef, { dispositivo_autorizado: deviceId });
                             sessionStorage.setItem('logado', 'sim');
                             window.location.href = "index.html";
-                        } 
-                        // Se já existir, verifica se o ID é o mesmo
-                        else if (dispositivoSalvo === deviceId) {
+                        } else if (dados.dispositivo_autorizado === deviceId) {
                             sessionStorage.setItem('logado', 'sim');
                             window.location.href = "index.html";
-                        } 
-                        // Bloqueia se for outro aparelho
-                        else {
+                        } else {
                             await signOut(auth);
                             alert("Acesso negado! Este aparelho não é o autorizado.");
                         }
                     } else {
-                        alert("Erro: Usuário sem cadastro na coleção 'usuarios'.");
+                        alert("Erro: Usuário não encontrado no banco.");
                     }
                 })
                 .catch((error) => {
-                    alert("E-mail ou senha incorretos ou erro de conexão: " + error.message);
+                    alert("E-mail ou senha incorretos: " + error.message);
                 });
         }
     </script>
@@ -79,7 +79,5 @@
         <input type="password" id="senha" placeholder="Sua senha"> <br><br>
         <button onclick="fazerLogin()">Entrar</button>
     </div>
-</body>
-</html>
 </body>
 </html>
