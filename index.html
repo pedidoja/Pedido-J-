@@ -1,15 +1,33 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<script>
-    // Se o usuário não estiver logado, manda ele de volta pro login
-    if (sessionStorage.getItem('logado') !== 'sim') {
-        window.location.href = "login.html";
-    }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pedido Já</title>
+    
+    <!-- Bibliotecas do Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0d9bz8FcTSW8dJYOeQoEMs6hsh1yoEOE",
+            authDomain: "pedidoja-695c3.firebaseapp.com",
+            projectId: "pedidoja-695c3",
+            storageBucket: "pedidoja-695c3.firebasestorage.app",
+            messagingSenderId: "621377263633",
+            appId: "1:621377263633:web:eec3f0e66eb6a89daa79b0"
+        };
+        firebase.initializeApp(firebaseConfig);
+        
+        // O Porteiro do index.html (manda para login.html se não estiver logado)
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = "login.html";
+            }
+        });
+    </script>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1a73e8">
@@ -127,149 +145,6 @@
 
 <div id="print-area"></div>
 
-<script>
-    function formatarMoeda(input) { if (input.value !== "") input.value = parseFloat(input.value).toFixed(2); }
-
-    function adicionarLinha() {
-        const container = document.getElementById('lista-mercadorias');
-        const div = document.createElement('div');
-        div.className = 'linha-mercadoria';
-        div.style.display = "flex"; 
-        div.style.gap = "5px"; 
-        div.style.marginBottom = "8px";
-        div.innerHTML = `
-            <textarea placeholder="Item" style="flex: 3;" class="m-desc"></textarea>
-            <input type="text" placeholder="Qtd" style="flex: 0.8;" class="m-un" oninput="calcularTotais()">
-            <input type="number" step="0.01" placeholder="R$ Un" style="flex: 1.5;" class="m-val" oninput="calcularTotais()" onblur="formatarMoeda(this)">
-        `;
-        container.appendChild(div);
-    }
-
-    function alternarCartao() {
-        const pag = document.getElementById('i-pagamento').value;
-        const tipo = document.getElementById('i-tipo-cartao').value;
-        document.getElementById('box-tipo-cartao').style.display = (pag === 'Cartão') ? 'block' : 'none';
-        document.getElementById('box-parcelas').style.display = (pag === 'Cartão' && tipo === 'Credito') ? 'block' : 'none';
-        document.getElementById('box-entrada').style.display = (pag === 'Cartão') ? 'block' : 'none';
-        document.getElementById('detalhe-pagamento').style.display = (pag === 'Cartão') ? 'block' : 'none';
-        calcularTotais();
-    }
-
-    const taxasCredito = { "1": 3.37, "2": 4.90, "3": 6.80, "4": 7.90, "5": 9.80, "6": 11.49, "7": 12.80, "8": 14.87, "9": 15.83, "10": 16.87, "11": 18.89, "12": 20.10 };
-    const taxaDebito = 2.00;
-
-    function montarTextoPagamento(totalPedido, entrada, pag, tipo, parcelas) {
-        if (pag !== 'Cartão') return "";
-        let baseCartao = Math.max(0, totalPedido - entrada);
-        let taxa = (tipo === 'Credito') ? (taxasCredito[parcelas] / 100) : (taxaDebito / 100);
-        let valorCartaoComTaxa = baseCartao + (baseCartao * taxa);
-        let valorFinalTotal = entrada + valorCartaoComTaxa;
-        
-        let texto = `CARTÃO R$ ${valorCartaoComTaxa.toFixed(2)}`;
-        if (tipo === 'Credito') texto += ` EM ${parcelas}x de R$ ${(valorCartaoComTaxa/parcelas).toFixed(2)}`;
-        else texto += ` (DÉBITO)`;
-        
-        if (entrada > 0) texto += `<br>DINHEIRO/PIX R$ ${entrada.toFixed(2)}`;
-        texto += `<br>TOTAL FINAL R$ ${valorFinalTotal.toFixed(2)}`;
-        return texto;
-    }
-
-    function calcularTotais() {
-        let somaMerc = 0;
-        const linhas = document.querySelectorAll('.linha-mercadoria');
-        linhas.forEach(linha => {
-            const qtd = parseFloat(linha.querySelector('.m-un').value) || 0;
-            const vUnit = parseFloat(linha.querySelector('.m-val').value) || 0;
-            if(qtd > 0 && vUnit > 0) somaMerc += (qtd * vUnit);
-            else if(vUnit > 0) somaMerc += vUnit;
-        });
-        
-        const frete = parseFloat(document.getElementById('i-v-frete').value) || 0;
-        const desc = parseFloat(document.getElementById('i-v-desc').value) || 0;
-        const totalPedido = Math.max(0, somaMerc + frete - desc);
-        const entrada = parseFloat(document.getElementById('i-v-entrada').value) || 0;
-        
-        document.getElementById('i-v-merc').value = somaMerc.toFixed(2);
-        document.getElementById('i-v-total').value = totalPedido.toFixed(2);
-        
-        const pag = document.getElementById('i-pagamento').value;
-        if (pag === 'Cartão') {
-            document.getElementById('detalhe-pagamento').innerHTML = montarTextoPagamento(totalPedido, entrada, pag, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
-        }
-    }
-
-    function novoPedido() { if (confirm("Limpar pedido atual?")) location.reload(); }
-
-    function executarImpressao() {
-        const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
-        let mercsHTML = "";
-        document.querySelectorAll('.linha-mercadoria').forEach(linha => {
-            const desc = linha.querySelector('.m-desc').value.toUpperCase();
-            const unTxt = linha.querySelector('.m-un').value || "1";
-            const qtdNum = parseFloat(unTxt) || 1;
-            const vUnit = parseFloat(linha.querySelector('.m-val').value) || 0;
-            const totalLinha = qtdNum * vUnit;
-            if(desc || vUnit > 0) {
-                mercsHTML += `<div style="display:flex; margin-bottom:4px;"><div style="flex:3">${desc}</div><div style="flex:0.6; text-align:center">${unTxt}</div><div style="flex:1.2; text-align:right">R$ ${totalLinha.toFixed(2)}</div></div>`;
-            }
-        });
-        
-        const f = (id) => document.getElementById(id).value.toUpperCase();
-        const vTotal = parseFloat(document.getElementById('i-v-total').value);
-        const vDesc = parseFloat(document.getElementById('i-v-desc').value) || 0;
-        const resumoPagamento = montarTextoPagamento(vTotal, parseFloat(document.getElementById('i-v-entrada').value) || 0, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
-        
-        let descontoHTML = vDesc > 0 ? `<div style="display:flex; justify-content:space-between; color: #d32f2f;"><span>DESCONTO:</span><span>- R$ ${vDesc.toFixed(2)}</span></div>` : "";
-
-        const viaHTML = `<div class="via">
-            <div class="header-p">PEDIDO JÁ</div>
-            <div style="line-height: 1.4;">
-                <div><b>DATA DO PEDIDO:</b> ${formatarData(document.getElementById('i-data').value)}</div>
-                <div><b>DATA DA ENTREGA:</b> ${formatarData(document.getElementById('i-entrega').value)}</div>
-            </div>
-            <div style="margin-top:8px"><b>CLIENTE:</b> ${f('i-cliente')}</div>
-            <div><b>RUA:</b> ${f('i-rua')}, ${f('i-num')}</div>
-            <div><b>BAIRRO:</b> ${f('i-bairro')} - ${f('i-cidade')}</div>
-            <div><b>REF:</b> ${f('i-ref')}</div>
-            <div><b>TEL:</b> ${f('i-tel')} | <b>OBS:</b> ${f('i-obs-breve')}</div>
-            <div style="margin-top:10px; border-bottom:1.5px solid #000; font-weight:bold; display:flex;">
-                <div style="flex:3">MERCADORIA</div><div style="flex:0.6; text-align:center">UN</div><div style="flex:1.2; text-align:right">VALOR</div>
-            </div>
-            <div style="min-height:70px; margin-top:10px;">${mercsHTML}</div>
-            <div style="margin-top:auto; border-top:1.5px solid #000; padding-top:5px">
-                <div style="display:flex; justify-content:space-between"><span>SUBTOTAL:</span><span>R$ ${document.getElementById('i-v-merc').value}</span></div>
-                <div style="display:flex; justify-content:space-between"><span>FRETE:</span><span>R$ ${document.getElementById('i-v-frete').value || "0.00"}</span></div>
-                ${descontoHTML}
-                <div style="display:flex; justify-content:space-between; font-weight:bold"><span>TOTAL:</span><span>R$ ${vTotal.toFixed(2)}</span></div>
-            </div>
-            <div style="margin-top:5px; font-size:11px; line-height: 1.2;"><b>PAGAMENTO:</b><br>${resumoPagamento}</div>
-            <div style="margin-top:5px; font-size:11px"><b>OBS:</b> ${f('i-obs')}</div>
-            <div class="assinaturas-v"><div><b>VENDEDOR:</b> ${f('i-vend')}</div><div><b>SUPERVISOR:</b> ${f('i-super')}</div></div>
-        </div>`;
-        document.getElementById('print-area').innerHTML = viaHTML + viaHTML;
-        window.print();
-    }
-
-    function enviarWhatsApp() {
-        const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
-        const f = (id) => document.getElementById(id).value.toUpperCase();
-        let itens = "";
-        document.querySelectorAll('.linha-mercadoria').forEach(linha => {
-            const desc = linha.querySelector('.m-desc').value.toUpperCase();
-            const un = linha.querySelector('.m-un').value || "1";
-            const vUnit = parseFloat(linha.querySelector('.m-val').value) || 0;
-            const totalLinha = (parseFloat(un) || 1) * vUnit;
-            if(desc) itens += `• ${un.toUpperCase()} - ${desc} (R$ ${totalLinha.toFixed(2)})\n`;
-        });
-        const vTotal = parseFloat(document.getElementById('i-v-total').value);
-        const vDesc = parseFloat(document.getElementById('i-v-desc').value) || 0;
-        const detalhesPagamento = montarTextoPagamento(vTotal, parseFloat(document.getElementById('i-v-entrada').value) || 0, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
-        
-        let descMsg = vDesc > 0 ? `*DESCONTO:* R$ ${vDesc.toFixed(2)}\n` : "";
-        
-        let msg = `*PEDIDO JÁ*\n\n*DATA DO PEDIDO:* ${formatarData(document.getElementById('i-data').value)}\n*DATA DA ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n*REF:* ${f('i-ref')}\n*TELEFONE:* ${f('i-tel')}\n*OBS:* ${f('i-obs-breve')}\n\n*ITENS:*\n${itens}\n*FRETE:* R$ ${document.getElementById('i-v-frete').value || "0,00"}\n${descMsg}*TOTAL:* R$ ${vTotal.toFixed(2)}\n*FORMA:* ${f('i-pagamento')}\n${detalhesPagamento.replace(/<br>/g, '\n')}\n*OBS GERAIS:* ${f('i-obs')}\n\n*VENDEDOR:* ${f('i-vend')}\n*SUPERVISOR:* ${f('i-super')}`;
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
-    }
-</script>
+<script src="script.js"></script>
 </body>
 </html>
