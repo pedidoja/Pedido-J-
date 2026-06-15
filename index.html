@@ -80,6 +80,11 @@
     </div>
 
     <div style="display: flex; gap: 10px;">
+        <div class="campo" style="flex: 2;"><label>Complemento</label><input type="text" id="i-comp"></div>
+        <div class="campo" style="flex: 1;"><label>CEP</label><input type="text" id="i-cep"></div>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
         <div class="campo" style="flex: 1;"><label>Bairro</label><input type="text" id="i-bairro"></div>
         <div class="campo" style="flex: 1;"><label>Cidade</label><input type="text" id="i-cidade"></div>
     </div>
@@ -240,6 +245,7 @@
             </div>
             <div style="margin-top:8px"><b>CLIENTE:</b> ${f('i-cliente')}</div>
             <div><b>RUA:</b> ${f('i-rua')}, ${f('i-num')}</div>
+            <div><b>COMPLEMENTO:</b> ${f('i-comp')} | <b>CEP:</b> ${f('i-cep')}</div>
             <div><b>BAIRRO:</b> ${f('i-bairro')} - ${f('i-cidade')}</div>
             <div><b>REF:</b> ${f('i-ref')}</div>
             <div><b>TEL:</b> ${f('i-tel')} | <b>OBS:</b> ${f('i-obs-breve')}</div>
@@ -278,7 +284,7 @@
         
         let descMsg = vDesc > 0 ? `*DESCONTO:* R$ ${vDesc.toFixed(2)}\n` : "";
         
-        let msg = `*PEDIDO JÁ*\n\n*DATA DO PEDIDO:* ${formatarData(document.getElementById('i-data').value)}\n*DATA DA ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')} - ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n*REF:* ${f('i-ref')}\n*TELEFONE:* ${f('i-tel')}\n*OBS:* ${f('i-obs-breve')}\n\n*ITENS:*\n${itens}\n*FRETE:* R$ ${document.getElementById('i-v-frete').value || "0,00"}\n${descMsg}*TOTAL:* R$ ${vTotal.toFixed(2)}\n*FORMA:* ${f('i-pagamento')}\n${detalhesPagamento.replace(/<br>/g, '\n')}\n*OBS GERAIS:* ${f('i-obs')}\n\n*VENDEDOR:* ${f('i-vend')}\n*SUPERVISOR:* ${f('i-super')}`;
+        let msg = `*PEDIDO JÁ*\n\n*DATA DO PEDIDO:* ${formatarData(document.getElementById('i-data').value)}\n*DATA DA ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')}\n*COMPLEMENTO:* ${f('i-comp')} - *CEP:* ${f('i-cep')}\n*BAIRRO:* ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n*REF:* ${f('i-ref')}\n*TELEFONE:* ${f('i-tel')}\n*OBS:* ${f('i-obs-breve')}\n\n*ITENS:*\n${itens}\n*FRETE:* R$ ${document.getElementById('i-v-frete').value || "0,00"}\n${descMsg}*TOTAL:* R$ ${vTotal.toFixed(2)}\n*FORMA:* ${f('i-pagamento')}\n${detalhesPagamento.replace(/<br>/g, '\n')}\n*OBS GERAIS:* ${f('i-obs')}\n\n*VENDEDOR:* ${f('i-vend')}\n*SUPERVISOR:* ${f('i-super')}`;
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
     }
 </script>
