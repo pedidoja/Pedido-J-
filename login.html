@@ -2,27 +2,83 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Login - Pedido Já</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            background-color: #e9ecef; 
+            font-family: sans-serif; 
+            margin: 0; 
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        h2 { text-align: center; color: #1a73e8; margin: 0 0 10px 0; }
+
+        .campo { display: flex; flex-direction: column; gap: 5px; }
+
+        label { font-size: 12px; font-weight: bold; color: #555; text-transform: uppercase; }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
 
-    <div id="formLogin">
-        <div class="login-container">
-            <h2>Login</h2>
-            <input type="email" id="email" placeholder="E-mail">
-            <input type="password" id="senha" placeholder="Senha">
-            <button type="button" id="btnEntrar">Entrar</button>
+    <div class="login-container" id="formLogin">
+        <h2>LOGIN</h2>
+        
+        <div class="campo">
+            <label>E-mail</label>
+            <input type="email" id="email" placeholder="nome@exemplo.com">
         </div>
-    </div>
 
-    <div id="meuApp" style="display: none;">
-        <h1>Bem-vindo ao Pedido Já!</h1>
-        <p>Seu sistema está pronto para uso.</p>
+        <div class="campo">
+            <label>Senha</label>
+            <input type="password" id="senha" placeholder="******">
+        </div>
+
+        <button type="button" id="btnEntrar">ENTRAR</button>
     </div>
 
     <script src="script.js"></script>
