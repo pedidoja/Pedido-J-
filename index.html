@@ -58,6 +58,7 @@
             .via { width: 47%; border: 1px dashed #000; padding: 10px; display: flex; flex-direction: column; font-size: 12px; color: #000 !important; height: 175mm; box-sizing: border-box; overflow: hidden; }
             .header-p { text-align: center; font-weight: bold; font-size: 17px; border-bottom: 2px solid #000; margin-bottom: 10px; color: #000 !important; }
             .assinaturas-v { margin-top: auto; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #000; padding-top: 8px; color: #000 !important; }
+            .rodape-aviso { margin-top: 10px; font-size: 9px; line-height: 1.2; font-weight: bold; }
             b, strong { color: #000 !important; }
         }
     </style>
@@ -270,21 +271,26 @@
     function enviarWhatsApp() {
         const formatarData = (data) => data ? data.split('-').reverse().join('/') : "";
         const f = (id) => document.getElementById(id).value.toUpperCase();
+        
         let itens = "";
         document.querySelectorAll('.linha-mercadoria').forEach(linha => {
             const desc = linha.querySelector('.m-desc').value.toUpperCase();
             const un = linha.querySelector('.m-un').value || "1";
             const vUnit = parseFloat(linha.querySelector('.m-val').value) || 0;
             const totalLinha = (parseFloat(un) || 1) * vUnit;
-            if(desc) itens += `• ${un.toUpperCase()} - ${desc} (R$ ${totalLinha.toFixed(2)})\n`;
+            if(desc || vUnit > 0) {
+                // Descrição seguida imediatamente do valor entre parênteses e a quantidade/unidade logo acima ou agrupada
+                itens += `${un} UND.     ${desc} (R$ ${totalLinha.toFixed(2)})\n`;
+            }
         });
+
         const vTotal = parseFloat(document.getElementById('i-v-total').value);
         const vDesc = parseFloat(document.getElementById('i-v-desc').value) || 0;
         const detalhesPagamento = montarTextoPagamento(vTotal, parseFloat(document.getElementById('i-v-entrada').value) || 0, document.getElementById('i-pagamento').value, document.getElementById('i-tipo-cartao').value, document.getElementById('i-parcelas').value);
         
         let descMsg = vDesc > 0 ? `*DESCONTO:* R$ ${vDesc.toFixed(2)}\n` : "";
         
-        let msg = `*PEDIDO JÁ*\n\n*DATA DO PEDIDO:* ${formatarData(document.getElementById('i-data').value)}\n*DATA DA ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')}\n*COMPLEMENTO:* ${f('i-comp')} - *CEP:* ${f('i-cep')}\n*BAIRRO:* ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n*REF:* ${f('i-ref')}\n*TELEFONE:* ${f('i-tel')}\n*OBS:* ${f('i-obs-breve')}\n\n*ITENS:*\n${itens}\n*FRETE:* R$ ${document.getElementById('i-v-frete').value || "0,00"}\n${descMsg}*TOTAL:* R$ ${vTotal.toFixed(2)}\n*FORMA:* ${f('i-pagamento')}\n${detalhesPagamento.replace(/<br>/g, '\n')}\n*OBS GERAIS:* ${f('i-obs')}\n\n*VENDEDOR:* ${f('i-vend')}\n*SUPERVISOR:* ${f('i-super')}`;
+        let msg = `*PEDIDO JÁ*\n\n*DATA DO PEDIDO:* ${formatarData(document.getElementById('i-data').value)}\n*DATA DA ENTREGA:* ${formatarData(document.getElementById('i-entrega').value)}\n\n*CLIENTE:* ${f('i-cliente')}\n*ENDEREÇO:* ${f('i-rua')}, ${f('i-num')}\n*COMPLEMENTO:* ${f('i-comp')} - *CEP:* ${f('i-cep')}\n*BAIRRO:* ${f('i-bairro')}\n*CIDADE:* ${f('i-cidade')}\n*REF:* ${f('i-ref')}\n*TELEFONE:* ${f('i-tel')}\n*OBS:* ${f('i-obs-breve')}\n\n*ITENS DO PEDIDO:*\n${itens}\n*FRETE:* R$ ${document.getElementById('i-v-frete').value || "0,00"}\n${descMsg}*TOTAL:* R$ ${vTotal.toFixed(2)}\n*FORMA:* ${f('i-pagamento')}\n${detalhesPagamento.replace(/<br>/g, '\n')}\n*OBS GERAIS:* ${f('i-obs')}\n\n*VENDEDOR:* ${f('i-vend')}\n*SUPERVISOR:* ${f('i-super')}`;
         window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`);
     }
 </script>
